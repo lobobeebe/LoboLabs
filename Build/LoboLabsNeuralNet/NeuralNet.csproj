@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{0A579D7C-9762-40FC-8A8F-9F92CB8ED147}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>LoboLabs</RootNamespace>
+    <AssemblyName>LoboLabs</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\NeuralNet\Actuator.cs">
+      <Link>Actuator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\NeuralNet\ComputationalNode.cs">
+      <Link>ComputationalNode.cs</Link>
+    </Compile>
+    <Compile Include="..\..\NeuralNet\Functions\ActivationFunction.cs">
+      <Link>Functions\ActivationFunction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\NeuralNet\Functions\AggregationFunction.cs">
+      <Link>Functions\AggregationFunction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\NeuralNet\Functions\ErrorFunction.cs">
+      <Link>Functions\ErrorFunction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\NeuralNet\Functions\HyperbolicTangent.cs">
+      <Link>Functions\HyperbolicTangent.cs</Link>
+    </Compile>
+    <Compile Include="..\..\NeuralNet\Functions\NoOpActivationFunction.cs">
+      <Link>Functions\NoOpActivationFunction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\NeuralNet\Functions\SoftmaxFunction.cs">
+      <Link>Functions\SoftmaxFunction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\NeuralNet\Functions\SumSquaredError.cs">
+      <Link>Functions\SumSquaredError.cs</Link>
+    </Compile>
+    <Compile Include="..\..\NeuralNet\InputData.cs">
+      <Link>InputData.cs</Link>
+    </Compile>
+    <Compile Include="..\..\NeuralNet\Messaging\DataMessage.cs">
+      <Link>Messaging\DataMessage.cs</Link>
+    </Compile>
+    <Compile Include="..\..\NeuralNet\Messaging\DataRequestCommandMessage.cs">
+      <Link>Messaging\DataRequestCommandMessage.cs</Link>
+    </Compile>
+    <Compile Include="..\..\NeuralNet\Messaging\DataRequestMessage.cs">
+      <Link>Messaging\DataRequestMessage.cs</Link>
+    </Compile>
+    <Compile Include="..\..\NeuralNet\Messaging\ErrorSignalUpdateMessage.cs">
+      <Link>Messaging\ErrorSignalUpdateMessage.cs</Link>
+    </Compile>
+    <Compile Include="..\..\NeuralNet\Messaging\Message.cs">
+      <Link>Messaging\Message.cs</Link>
+    </Compile>
+    <Compile Include="..\..\NeuralNet\Messaging\MessageProcessor.cs">
+      <Link>Messaging\MessageProcessor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\NeuralNet\NeuralNetwork.cs">
+      <Link>NeuralNetwork.cs</Link>
+    </Compile>
+    <Compile Include="..\..\NeuralNet\NeuralNetworkGenerator.cs">
+      <Link>NeuralNetworkGenerator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\NeuralNet\NeuralNode.cs">
+      <Link>NeuralNode.cs</Link>
+    </Compile>
+    <Compile Include="..\..\NeuralNet\Neuron.cs">
+      <Link>Neuron.cs</Link>
+    </Compile>
+    <Compile Include="..\..\NeuralNet\OutputData.cs">
+      <Link>OutputData.cs</Link>
+    </Compile>
+    <Compile Include="..\..\NeuralNet\Scape.cs">
+      <Link>Scape.cs</Link>
+    </Compile>
+    <Compile Include="..\..\NeuralNet\ScapeListener.cs">
+      <Link>ScapeListener.cs</Link>
+    </Compile>
+    <Compile Include="..\..\NeuralNet\Sensor.cs">
+      <Link>Sensor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\NeuralNet\StandardNeuralNetwork.cs">
+      <Link>StandardNeuralNetwork.cs</Link>
+    </Compile>
+    <Compile Include="..\..\NeuralNet\StandardNeuralNetworkGenerator.cs">
+      <Link>StandardNeuralNetworkGenerator.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Utilities\Utilities.csproj">
+      <Project>{ae54856c-78f0-43df-9d71-e73288d37b6a}</Project>
+      <Name>Utilities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
