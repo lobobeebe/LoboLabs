@@ -8,6 +8,8 @@ namespace LoboLabs.GestureNeuralNet
     
     public class BinaryGestureTrainer : NeuralNetworkTrainer<Vector>, GestureScapeListener
     {
+        private static ClassLogger Logger = new ClassLogger(typeof(BinaryGestureTrainer));
+
         public BinaryGestureTrainer() : base(new SumSquaredError())
         {
             PositiveTrainingData = new List<List<Vector>>();
@@ -75,13 +77,27 @@ namespace LoboLabs.GestureNeuralNet
         {
             if (IsPositiveTraining)
             {
-                // Add a position to the end of the last gesture
-                PositiveTrainingData[PositiveTrainingData.Count - 1].Add(Vector.FromList(data));
+                if (PositiveTrainingData.Count > 0)
+                {
+                    // Add a position to the end of the last gesture
+                    PositiveTrainingData[PositiveTrainingData.Count - 1].Add(Vector.FromList(data));
+                }
+                else
+                {
+                    Logger.Error("Cannot add position of positive training gesture to empty list.");
+                }
             }
             else
             {
-                // Add a position to the end of the last gesture
-                NegativeTrainingData[NegativeTrainingData.Count - 1].Add(Vector.FromList(data));
+                if (PositiveTrainingData.Count > 0)
+                {
+                    // Add a position to the end of the last gesture
+                    NegativeTrainingData[NegativeTrainingData.Count - 1].Add(Vector.FromList(data));
+                }
+                else
+                {
+                    Logger.Error("Cannot add position of negative training gesture to empty list.");
+                }
             }
         }
 
@@ -90,17 +106,11 @@ namespace LoboLabs.GestureNeuralNet
             // If the last gesture is not empty, add a new gesture (list of vectors)
             if (IsPositiveTraining)
             {
-                if (PositiveTrainingData[PositiveTrainingData.Count - 1].Count > 0)
-                {
-                    PositiveTrainingData.Add(new List<Vector>());
-                }
+                PositiveTrainingData.Add(new List<Vector>());
             }
             else
             {
-                if (NegativeTrainingData[NegativeTrainingData.Count - 1].Count > 0)
-                {
-                    NegativeTrainingData.Add(new List<Vector>());
-                }
+                NegativeTrainingData.Add(new List<Vector>());
             }
         }
 
