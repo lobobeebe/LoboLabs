@@ -40,26 +40,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\GestureNeuralNet\BinaryGestureNeuralNetwork.cs">
+      <Link>BinaryGestureNeuralNetwork.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GestureNeuralNet\BinaryGestureNeuralNetworkGenerator.cs">
+      <Link>BinaryGestureNeuralNetworkGenerator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GestureNeuralNet\BinaryGestureTrainer.cs">
+      <Link>BinaryGestureTrainer.cs</Link>
+    </Compile>
     <Compile Include="..\..\GestureNeuralNet\GestureDetectionListener.cs">
       <Link>GestureDetectionListener.cs</Link>
-    </Compile>
-    <Compile Include="..\..\GestureNeuralNet\GestureNeuralNetwork.cs">
-      <Link>GestureNeuralNetwork.cs</Link>
     </Compile>
     <Compile Include="..\..\GestureNeuralNet\GestureScape.cs">
       <Link>GestureScape.cs</Link>
     </Compile>
-    <Compile Include="..\..\GestureNeuralNet\StaticGestureNeuralNetwork.cs">
-      <Link>StaticGestureNeuralNetwork.cs</Link>
-    </Compile>
-    <Compile Include="..\..\GestureNeuralNet\StaticGestureNeuralNetworkGenerator.cs">
-      <Link>StaticGestureNeuralNetworkGenerator.cs</Link>
-    </Compile>
-    <Compile Include="..\..\GestureNeuralNet\StaticGestureScape.cs">
-      <Link>StaticGestureScape.cs</Link>
-    </Compile>
-    <Compile Include="..\..\GestureNeuralNet\StaticGestureTrainer.cs">
-      <Link>StaticGestureTrainer.cs</Link>
+    <Compile Include="..\..\GestureNeuralNet\GestureScapeListener.cs">
+      <Link>GestureScapeListener.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

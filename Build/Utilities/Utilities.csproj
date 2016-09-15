@@ -43,17 +43,20 @@
     <Compile Include="..\..\Utilities\ClassLogger.cs">
       <Link>ClassLogger.cs</Link>
     </Compile>
-    <Compile Include="..\..\Utilities\KnownData.cs">
-      <Link>KnownData.cs</Link>
-    </Compile>
     <Compile Include="..\..\Utilities\LogWriter.cs">
       <Link>LogWriter.cs</Link>
     </Compile>
     <Compile Include="..\..\Utilities\MathUtils.cs">
       <Link>MathUtils.cs</Link>
     </Compile>
+    <Compile Include="..\..\Utilities\NetworkInputType.cs">
+      <Link>NetworkInputType.cs</Link>
+    </Compile>
     <Compile Include="..\..\Utilities\Pair.cs">
       <Link>Pair.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Utilities\TrainingData.cs">
+      <Link>TrainingData.cs</Link>
     </Compile>
     <Compile Include="..\..\Utilities\Vector.cs">
       <Link>Vector.cs</Link>

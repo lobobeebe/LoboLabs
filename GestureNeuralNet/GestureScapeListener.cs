@@ -1,11 +1,8 @@
-﻿using LoboLabs.Utilities;
-
-namespace LoboLabs.NeuralNet
+﻿namespace LoboLabs.NeuralNet
 {
 
-    public interface GestureScapeListener
+    public interface GestureScapeListener : ScapeListener
     {
-        void ProcessDataUpdate(Vector data);
         void ProcessStartGesturing();
         void ProcessStopGesturing();
     }

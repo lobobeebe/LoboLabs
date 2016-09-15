@@ -94,6 +94,9 @@
     <Compile Include="..\..\NeuralNet\NeuralNetworkGenerator.cs">
       <Link>NeuralNetworkGenerator.cs</Link>
     </Compile>
+    <Compile Include="..\..\NeuralNet\NeuralNetworkTrainer.cs">
+      <Link>NeuralNetworkTrainer.cs</Link>
+    </Compile>
     <Compile Include="..\..\NeuralNet\NeuralNode.cs">
       <Link>NeuralNode.cs</Link>
     </Compile>
@@ -111,12 +114,6 @@
     </Compile>
     <Compile Include="..\..\NeuralNet\Sensor.cs">
       <Link>Sensor.cs</Link>
-    </Compile>
-    <Compile Include="..\..\NeuralNet\StandardNeuralNetwork.cs">
-      <Link>StandardNeuralNetwork.cs</Link>
-    </Compile>
-    <Compile Include="..\..\NeuralNet\StandardNeuralNetworkGenerator.cs">
-      <Link>StandardNeuralNetworkGenerator.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

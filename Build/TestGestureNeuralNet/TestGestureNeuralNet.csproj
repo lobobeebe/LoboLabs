@@ -44,8 +44,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\TestGestureNeuralNet\TestStaticGestureNeuralNetwork.cs">
-      <Link>TestStaticGestureNeuralNetwork.cs</Link>
+    <Compile Include="..\..\TestGestureNeuralNet\TestGestureNeuralNetwork.cs">
+      <Link>TestGestureNeuralNetwork.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

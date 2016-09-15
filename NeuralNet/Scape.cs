@@ -35,7 +35,7 @@ public abstract class Scape
     {
         foreach(ScapeListener listener in ScapeListeners)
         {
-            listener.OnReceiveScapeData(data);
+            listener.ProcessData(data);
         }
     }
 }

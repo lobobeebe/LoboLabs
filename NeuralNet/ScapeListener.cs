@@ -7,7 +7,7 @@ namespace NeuralNet
 
 public interface ScapeListener
 {
-    void OnReceiveScapeData(List<double> data);
+    void ProcessData(List<double> data);
 }
 
 }

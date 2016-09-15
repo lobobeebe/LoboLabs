@@ -1,31 +1,31 @@
-﻿namespace LoboLabs
-{ 
-namespace NeuralNet
-{
-namespace Messaging
+﻿namespace LoboLabs.NeuralNet.Messaging
 {
 
-public class InputData
-{
-    public bool IsValid
+    public class InputData
     {
-        get;
-        set;
+        public bool IsValid
+        {
+            get;
+            set;
+        }
+
+        public double Value
+        {
+            get;
+            set;
+        }
+
+        public double Weight
+        {
+            get;
+            set;
+        }
+
+        public double TotalWeightDelta
+        {
+            get;
+            set;
+        }
     }
 
-    public double Value
-    {
-        get;
-        set;
-    }
-
-    public double Weight
-    {
-        get;
-        set;
-    }
-}
-
-}
-}
 }

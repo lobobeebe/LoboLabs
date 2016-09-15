@@ -1,27 +1,32 @@
-﻿namespace LoboLabs
-{
-namespace NeuralNet
+﻿using System;
+
+namespace LoboLabs.NeuralNet
 {
 
-using Messaging;
-
-public class Sensor : NeuralNode
-{
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    public Sensor()
+    public class Sensor : ComputationalNode
     {
-    }
-
-    public override void ProcessMessage(Message message)
-    {
-        if(message.MessageType == DataMessage.MESSAGE_TYPE)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public Sensor() : base(new Functions.NoOpActivationFunction())
         {
-            SendToOutputs(new DataMessage(this, (message as DataMessage).Value));
+        }
+
+        public override void CalculateErrorSignals(double learningRate)
+        {
+            // Cannot Compute so there will never be error signals
+            throw new NotImplementedException();
+        }
+
+        public override void Compute()
+        {
+            // Cannot Compute with a Sensor
+            throw new NotImplementedException();
+        }
+
+        public void SetLastOutput(double lastOutput)
+        {
+            LastOutput = lastOutput;
         }
     }
-}
-
-}
 }

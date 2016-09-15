@@ -9,8 +9,8 @@ namespace LoboLabs.GestureNeuralNet.TestGestureNeuralNetwork
     public class TestGestureNeuralNetwork : GestureDetectionListener
     {
         private GestureScape mScape;
-        private GestureTrainer mTrainer;
-        private GestureNeuralNetworkGenerator mGenerator;
+        private BinaryGestureTrainer mTrainer;
+        private BinaryGestureNeuralNetworkGenerator mGenerator;
 
         private Queue<string> mDetectedGestureQueue;
 
@@ -18,8 +18,8 @@ namespace LoboLabs.GestureNeuralNet.TestGestureNeuralNetwork
         public void SetUp()
         {
             mScape = new GestureScape();
-            mTrainer = new GestureTrainer();
-            mGenerator = new GestureNeuralNetworkGenerator();
+            mTrainer = new BinaryGestureTrainer();
+            mGenerator = new BinaryGestureNeuralNetworkGenerator();
 
             mDetectedGestureQueue = new Queue<string>();
             
@@ -28,6 +28,7 @@ namespace LoboLabs.GestureNeuralNet.TestGestureNeuralNetwork
         
         public void AddStraightData(int numPoints)
         {
+            mScape.StartGesturing();
             mScape.UpdateGesturePosition(new Vector(0, 0, 0));
 
             const float VARIANCE = .3f;
@@ -37,11 +38,12 @@ namespace LoboLabs.GestureNeuralNet.TestGestureNeuralNetwork
                 mScape.UpdateGesturePosition(new Vector(0, 0, (float)MathUtils.NextRand(1 - VARIANCE, 1 + VARIANCE)));
             }
 
-            mScape.EndGesture();
+            mScape.StopGesturing();
         }
 
         public void AddCircleData(float radius, int numPoints)
         {
+            mScape.StartGesturing();
             mScape.UpdateGesturePosition(new Vector(0, 0, 0));
 
             const float VARIANCE = .3f;
@@ -54,11 +56,12 @@ namespace LoboLabs.GestureNeuralNet.TestGestureNeuralNetwork
                 mScape.UpdateGesturePosition(position - lastPosition);
             }
 
-            mScape.EndGesture();
+            mScape.StopGesturing();
         }
 
         public void AddRandomData(float radius, int numPoints)
         {
+            mScape.StartGesturing();
             mScape.UpdateGesturePosition(new Vector(0, 0, 0));
 
             for (int i = 0; i < numPoints - 1; ++i)
@@ -68,7 +71,7 @@ namespace LoboLabs.GestureNeuralNet.TestGestureNeuralNetwork
                     (float)System.Math.Sin(randomAngle) * radius, (float)System.Math.Sin(randomAngle) * radius));
             }
 
-            mScape.EndGesture();
+            mScape.StopGesturing();
         }
 
         [Test]
@@ -77,7 +80,7 @@ namespace LoboLabs.GestureNeuralNet.TestGestureNeuralNetwork
             /* Want to teach this neural net a single gesture by training on positive and negative gestures. The gesture to be taught will be a punch. */
 
             // Teach Positive Punch Gestures
-            mTrainer.TrainingCategory = "Punch";
+            mTrainer.IsPositiveTraining = true;
             const int NUM_PUNCH_GESTURES = 30;
             for (int i = 0; i < NUM_PUNCH_GESTURES; ++i)
             {
@@ -85,7 +88,7 @@ namespace LoboLabs.GestureNeuralNet.TestGestureNeuralNetwork
             }
 
             // Teach Negative Circle Gestures
-            mTrainer.TrainingCategory = "Negative";
+            mTrainer.IsPositiveTraining = false;
             const int NUM_CIRCLE_GESTURES = 30;
             for(int i = 0; i < NUM_CIRCLE_GESTURES; ++i)
             {
@@ -93,7 +96,7 @@ namespace LoboLabs.GestureNeuralNet.TestGestureNeuralNetwork
             }
 
             // Teach Negative Random Gestures
-            mTrainer.TrainingCategory = "Negative";
+            mTrainer.IsPositiveTraining = false;
             const int NUM_RANDOM_GESTURES = 30;
             for (int i = 0; i < NUM_RANDOM_GESTURES; ++i)
             {
@@ -101,21 +104,18 @@ namespace LoboLabs.GestureNeuralNet.TestGestureNeuralNetwork
             }
 
             // Generate a NeuralNet with a single hidden node
-            mGenerator.NumInputs = 3;
-            mGenerator.NumOutputs = 2;
             mGenerator.NumHidden = 1;
-            StaticGestureNeuralNetwork gestureNetworkSingle = (StaticGestureNeuralNetwork)mGenerator.Generate();
+            BinaryGestureNeuralNetwork gestureNetworkSingle = (BinaryGestureNeuralNetwork)mGenerator.Generate();
             gestureNetworkSingle.RegisterListener(this);
 
             // Generate a Gesture NeuralNet with three hidden nodes
-            mGenerator.NumInputs = 3;
-            mGenerator.NumOutputs = 2;
             mGenerator.NumHidden = 3;
-            StaticGestureNeuralNetwork gestureNetworkMultiple = (StaticGestureNeuralNetwork)mGenerator.Generate();
+            BinaryGestureNeuralNetwork gestureNetworkMultiple = (BinaryGestureNeuralNetwork)mGenerator.Generate();
             gestureNetworkMultiple.RegisterListener(this);
 
-            // Train single node network
-            mTrainer.Train(gestureNetworkSingle);
+            // Train networks
+            mTrainer.TrainBackPropagation(gestureNetworkSingle);
+            mTrainer.TrainBackPropagation(gestureNetworkMultiple);
 
             // Remove Trainer as listener and add Single hidden node NeuralNet
             mScape.RemoveListener(mTrainer);
