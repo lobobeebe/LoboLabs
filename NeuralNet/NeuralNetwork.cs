@@ -14,22 +14,28 @@ namespace LoboLabs.NeuralNet
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="aggregationFunction"></param>
-        /// <param name="errorFunction"></param>
         public NeuralNetwork()
         {
-            Sensors = new List<Sensor>();
-            Neurons = new List<Neuron>();
-            Actuator = new Actuator();
-        }    
-        
-        /// <summary>
-        /// Final Actuator holding the output value
-        /// </summary>
-        public Actuator Actuator
+            Sensors = new List<Node>();
+            Neurons = new List<List<ComputationalNode>>();
+        }
+
+        public ComputationalNode GetActuator()
         {
-            get;
-            set;
+            // TODO: Change to return multiple Actuators
+            ComputationalNode actuator = null;
+
+            if(Neurons != null && Neurons.Count > 0)
+            {
+                List<ComputationalNode> actuators = Neurons[Neurons.Count - 1];
+                actuator = actuators[0];
+            }
+            else
+            {
+                Logger.Error("Cannot get actuators from empty network.");
+            }
+
+            return actuator;
         }
 
         /// <summary>
@@ -39,26 +45,48 @@ namespace LoboLabs.NeuralNet
         /// <returns></returns>
         public double Compute(List<double> inputs)
         {
-            if (inputs.Count != Sensors.Count)
+            double output = 0;
+
+            if (Neurons.Count > 0 && Neurons[Neurons.Count - 1].Count > 0 && inputs != null)
             {
-                Logger.Debug("Cannot Compute inputs of size " + inputs.Count + " with " + Sensors.Count + " Sensors.");
+                if (inputs.Count == Sensors.Count)
+                {
+                    // Set input information of Sensors
+                    for (int i = 0; i < Sensors.Count; ++i)
+                    {
+                        Sensors[i].LastOutput = inputs[i];
+                    }
+
+                    // Compute for all nodes in order of layer
+                    for (int layerIndex = 0; layerIndex < Neurons.Count; ++layerIndex)
+                    {
+                        for (int nodeIndex = 0; nodeIndex < Neurons[layerIndex].Count; ++nodeIndex)
+                        {
+                            Neurons[layerIndex][nodeIndex].Compute();
+                        }
+                    }
+
+                    // TODO: Change this when multiple actuators are allowed
+                    List<ComputationalNode> actuators = Neurons[Neurons.Count - 1];
+                    output = actuators[0].LastOutput;
+                }
+                else
+                {
+                    Logger.Error("Cannot Compute inputs of size " + inputs.Count + " with " + Sensors.Count + " Sensors.");
+                }
             }
             else
             {
-                // Set input information of Sensors
-                for (int i = 0; i < Sensors.Count; ++i)
-                {
-                    Sensors[i].SetLastOutput(inputs[i]);
-                }
+                Logger.Error("Cannot Compute: {Inputs: " + inputs + ", Neurons: " + Neurons + "}");
             }
 
-            return Actuator.LastOutput;
+            return output;
         }
 
         /// <summary>
         /// Vector of Neurons that belong to this Neural Net
         /// </summary>
-        public List<Neuron> Neurons
+        public List<List<ComputationalNode>> Neurons
         {
             get;
             set;
@@ -66,6 +94,7 @@ namespace LoboLabs.NeuralNet
 
         public void ProcessData(List<double> data)
         {
+            // Compute on the input data
             OnResult(Compute(data));
         }
 
@@ -74,10 +103,15 @@ namespace LoboLabs.NeuralNet
         /// <summary>
         /// Vector of sensors that belong to this Neural Net
         /// </summary>
-        public List<Sensor> Sensors
+        public List<Node> Sensors
         {
             get;
             set;
+        }
+
+        public void WriteToFile(string fileName)
+        {
+            // TODO
         }
     }
 

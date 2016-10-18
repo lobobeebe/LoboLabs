@@ -16,14 +16,32 @@ namespace LoboLabs.GestureNeuralNet
             mLastPosition = new Vector(0, 0, 0);
         }
 
+        private void NotifyStartGesturing()
+        {
+            foreach (ScapeListener listener in ScapeListeners)
+            {
+                (listener as GestureScapeListener).ProcessStartGesturing();
+            }
+        }
+
+        private void NotifyStopGesturing()
+        {
+            foreach (ScapeListener listener in ScapeListeners)
+            {
+                (listener as GestureScapeListener).ProcessStopGesturing();
+            }
+        }
+
         public virtual void StartGesturing()
         {
             mHasLastPosition = false;
+
+            NotifyStartGesturing();
         }
 
         public virtual void StopGesturing()
         {
-            // Do nothing
+            NotifyStopGesturing();
         }
 
         public virtual void UpdateGesturePosition(Vector position)

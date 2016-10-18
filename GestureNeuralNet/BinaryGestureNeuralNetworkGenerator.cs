@@ -7,11 +7,13 @@ namespace LoboLabs.GestureNeuralNet
     public class BinaryGestureNeuralNetworkGenerator : NeuralNetworkGenerator
     {
         private static int DEFAULT_NUM_NEURONS = 1;
+        private static int DEFAULT_NUM_LAYERS = 1;
         private static int DEFAULT_NUM_SENSORS = 3;
         private static int DEFAULT_NUM_ACTUATORS = 1;
 
         public BinaryGestureNeuralNetworkGenerator()
         {
+            NumLayers = DEFAULT_NUM_LAYERS;
             NumHidden = DEFAULT_NUM_NEURONS;
             NumInputs = DEFAULT_NUM_SENSORS;
             NumOutputs = DEFAULT_NUM_ACTUATORS;
@@ -22,35 +24,44 @@ namespace LoboLabs.GestureNeuralNet
             BinaryGestureNeuralNetwork network = new BinaryGestureNeuralNetwork();
 
             // Because vector positions are the inputs to Gestures, there will always be 3 inputs.
-            List<Sensor> sensors = new List<Sensor>(NumInputs);
+            List<Node> sensors = new List<Node>(NumInputs);
             for (int sensor = 0; sensor < NumInputs; ++sensor)
             {
-                sensors.Add(new Sensor());
+                sensors.Add(new Node());
             }
 
-            // Currently, gesture detection is binary - True or False. Always 1 Actuator.
-            List<Actuator> actuators = new List<Actuator>(NumOutputs);
-            for (int actuator = 0; actuator < NumOutputs; ++actuator)
-            {
-                actuators.Add(new Actuator());
-            }
+            // Two layers of neurons because one hidden layer and one layer of actuators
+            List<List<ComputationalNode>> neurons = new List<List<ComputationalNode>>(2);
+
+            // Add two Hidden Layers
+            neurons.Add(new List<ComputationalNode>());
+
+            // Add Actuator Layer and Actuator
+            neurons.Add(new List<ComputationalNode>());
+            neurons[1].Add(new ComputationalNode(new LogisticFunction()));
+            neurons[1][0].Bias = GetNextWeight();
 
             // Add a number of hidden neurons
-            List<Neuron> neurons = new List<Neuron>(NumHidden);
-            for (int neuron = 0; neuron < NumHidden; ++neuron)
+            for (int layer = 0; layer < NumLayers; ++layer)
             {
-                neurons.Add(new Neuron(new HyperbolicTangent()));
-                
-                foreach (Sensor sensor in sensors)
+                for (int neuron = 0; neuron < NumHidden; ++neuron)
                 {
-                    neurons[neuron].RegisterInput(sensor, GetNextWeight());
-                    sensor.RegisterOutput(neurons[neuron]);
-                }
+                    // Add the new Node
+                    neurons[layer].Add(new ComputationalNode(new LogisticFunction()));
 
-                foreach (Actuator actuator in actuators)
-                {
-                    neurons[neuron].RegisterOutput(actuator);
-                    actuator.RegisterInput(neurons[neuron], GetNextWeight());
+                    // Recurrent link to self
+                    //neurons[layer][neuron].RegisterInput(neurons[0][neuron], GetNextWeight());
+
+                    // Add all sensors as inputs - TODO: This only works with two layers
+                    foreach (Node sensor in sensors)
+                    {
+                        neurons[layer][neuron].RegisterInput(sensor, GetNextWeight());
+                        neurons[layer][neuron].Bias = GetNextWeight();
+                    }
+
+                    // Add each node to the actuator's inputs
+                    // TODO: This only works with two layers and 1 actuator
+                    neurons[1][0].RegisterInput(neurons[layer][neuron], GetNextWeight());
                 }
             }
 
@@ -68,6 +79,12 @@ namespace LoboLabs.GestureNeuralNet
         }
 
         private int NumInputs
+        {
+            get;
+            set;
+        }
+
+        private int NumLayers
         {
             get;
             set;

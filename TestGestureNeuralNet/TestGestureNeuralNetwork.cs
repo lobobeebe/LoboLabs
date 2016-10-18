@@ -32,10 +32,11 @@ namespace LoboLabs.GestureNeuralNet.TestGestureNeuralNetwork
             mScape.UpdateGesturePosition(new Vector(0, 0, 0));
 
             const float VARIANCE = .3f;
+            float currentPosition = 0;
 
             for (int i = 0; i < numPoints - 1; ++i)
             {
-                mScape.UpdateGesturePosition(new Vector(0, 0, (float)MathUtils.NextRand(1 - VARIANCE, 1 + VARIANCE)));
+                mScape.UpdateGesturePosition(new Vector(0, 0, currentPosition + (float)MathUtils.NextRand(1 - VARIANCE, 1 + VARIANCE)));
             }
 
             mScape.StopGesturing();
@@ -47,13 +48,13 @@ namespace LoboLabs.GestureNeuralNet.TestGestureNeuralNetwork
             mScape.UpdateGesturePosition(new Vector(0, 0, 0));
 
             const float VARIANCE = .3f;
-            Vector lastPosition = new Vector(0, 0, 0);
+            //Vector lastPosition = new Vector(0, 0, 0);
 
             for (double angle = 0; angle < 2 * System.Math.PI; angle += 2 * System.Math.PI / (numPoints - 1))
             {
                 float tempRadius = (float)MathUtils.NextRand(radius - VARIANCE, radius + VARIANCE);
                 Vector position = new Vector((float)System.Math.Cos(angle) * tempRadius, (float)System.Math.Sin(angle) * tempRadius, (float)MathUtils.NextRand(-.1, .1));
-                mScape.UpdateGesturePosition(position - lastPosition);
+                mScape.UpdateGesturePosition(position);// - lastPosition);
             }
 
             mScape.StopGesturing();
@@ -73,7 +74,7 @@ namespace LoboLabs.GestureNeuralNet.TestGestureNeuralNetwork
 
             mScape.StopGesturing();
         }
-
+        
         [Test]
         public void SingleGesture()
         {
@@ -100,7 +101,7 @@ namespace LoboLabs.GestureNeuralNet.TestGestureNeuralNetwork
             const int NUM_RANDOM_GESTURES = 30;
             for (int i = 0; i < NUM_RANDOM_GESTURES; ++i)
             {
-                AddRandomData((float)MathUtils.NextRand(.8, 1.2), (int)MathUtils.NextRand(25, 35));
+                //AddRandomData((float)MathUtils.NextRand(.8, 1.2), (int)MathUtils.NextRand(25, 35));
             }
 
             // Generate a NeuralNet with a single hidden node
@@ -114,8 +115,9 @@ namespace LoboLabs.GestureNeuralNet.TestGestureNeuralNetwork
             gestureNetworkMultiple.RegisterListener(this);
 
             // Train networks
+            mTrainer.LearningRate = 0.17;
             mTrainer.TrainBackPropagation(gestureNetworkSingle);
-            mTrainer.TrainBackPropagation(gestureNetworkMultiple);
+            //mTrainer.TrainBackPropagation(gestureNetworkMultiple);
 
             // Remove Trainer as listener and add Single hidden node NeuralNet
             mScape.RemoveListener(mTrainer);

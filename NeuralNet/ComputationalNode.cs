@@ -1,25 +1,20 @@
 ﻿using System.Collections.Generic;
 
-using LoboLabs.NeuralNet.Messaging;
 using LoboLabs.Utilities;
 
 namespace LoboLabs.NeuralNet
 {
     
-    public abstract class ComputationalNode
+    public class ComputationalNode : Node
     {
         private static ClassLogger Logger = new ClassLogger(typeof(ComputationalNode));
 
-        public ComputationalNode(Functions.ActivationFunction activationFunction)
+        public ComputationalNode(Functions.ActivationFunction activationFunction) :
+            base(true) // ComputationalNodes need to sum ErrorSignals at the Node level
         {
             // Inputs
-            Inputs = new List<ComputationalNode>();
-            InputDataMap = new Dictionary<ComputationalNode, InputData>();
-
-            // Outputs
-            Outputs = new List<ComputationalNode>();
-            OutputDataMap = new Dictionary<ComputationalNode, OutputData>();
-
+            InputWeights = new Dictionary<Node, WeightData>();
+            
             // Activation Function
             ActivationFunction = activationFunction;
         }
@@ -33,34 +28,37 @@ namespace LoboLabs.NeuralNet
             set;
         }
 
+        public double Bias
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// Propagates the error of this nodes last output to this nodes inputs
         /// TODO: Elaborate
         /// </summary>
         /// <param name="learningRate">TODO</param>
-        public virtual void CalculateErrorSignals(double learningRate)
+        public virtual void CalculateErrorSignals()
         {
-            // Save the stored ErrorSignalSum locally for use.
-            double errorSignalAggregation = ErrorSignalSum;
+            // gⱼ = ActivationFunction
+            // 𝛅ⱼ = gⱼ'(zⱼ)(Σwⱼₖ𝛅ₖ + e)
+            // ∂E/∂wᵢⱼ = aᵢ𝛅ⱼ
+            // ∂E/∂bⱼ = 𝛅ⱼ
 
-            // Reset the stored Error Sigal Sum for the next round. 
-            ErrorSignalSum = 0;
-
-            // Multiply by the derivative of the activation function once outside the loop of inputs
-            errorSignalAggregation *= ActivationFunction.ApplyDerivative(LastOutput);
+            double delta = GetAndResetErrorSignalSum() * ActivationFunction.ApplyDerivative(LastPreActivationOutput);
 
             // Compute Weight Gradients and Send Input Errors
-            foreach (ComputationalNode input in Inputs)
+            foreach (Node input in InputWeights.Keys)
             {
                 // Calculate Weight Delta
-                double weightDelta = learningRate * errorSignalAggregation * InputDataMap[input].Value;
+                InputWeights[input].TotalWeightDelta += input.LastOutput * delta;
 
-                // Calculate and Send Input Errors
-                double inputErrorSignal = errorSignalAggregation * InputDataMap[input].Weight;
-                input.ProcessErrorSignal(inputErrorSignal);
+                // Calculate Bias Delta
+                TotalBiasDelta += delta;
 
-                // Update Total Weight Delta to be updated at the end of the training
-                InputDataMap[input].TotalWeightDelta += weightDelta;
+                // Calculate and Send Input Error
+                input.AddErrorSignal(InputWeights[input].Weight * delta);
             }
         }
 
@@ -75,95 +73,60 @@ namespace LoboLabs.NeuralNet
             // - Finally, apply the activation function to the result
 
             // Apply the Dot Product on the Inputs and their Weight List
-            double result = 0;
-            foreach (ComputationalNode input in Inputs)
+            LastPreActivationOutput = 0;
+            foreach (Node input in InputWeights.Keys)
             {
-                result += InputDataMap[input].Value * InputDataMap[input].Weight;
+                LastPreActivationOutput += input.LastOutput * InputWeights[input].Weight;
             }
+
+            // Add the bias
+            //LastPreActivationOutput += Bias;
 
             // Post-Processing
-            LastOutput = ActivationFunction.Apply(result);
-        }
-
-        private double ErrorSignalSum
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// A vector of NeuralNode's that are sending this node outputs.
-        /// </summary>
-        protected Dictionary<ComputationalNode, InputData> InputDataMap
-        {
-            get;
-            private set;
-        }
-
-        protected List<ComputationalNode> Inputs
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// Stores the last output of this Neuron
-        /// </summary>
-        public double LastOutput
-        {
-            get;
-            protected set;
-        }
-
-        /// <summary>
-        /// A vector of the NeuralNodes to whcih this node will send messages.
-        /// </summary>
-        public Dictionary<ComputationalNode, OutputData> OutputDataMap
-        {
-            get;
-            set;
-        }
-
-        protected List<ComputationalNode> Outputs
-        {
-            get;
-            private set;
-        }
-
-        public void ProcessErrorSignal(double errorSignal)
-        {
-            ErrorSignalSum += errorSignal;
-        }
-
-        private void ProcessInput(ComputationalNode sender, double value)
-        {
-            // We just received new information, validate this data.
-            InputDataMap[sender].Value = value; 
+            LastOutput = ActivationFunction.Apply(LastPreActivationOutput);
         }
         
-        public void RegisterInput(ComputationalNode item, double inputWeight)
+        public Dictionary<Node, WeightData> InputWeights
         {
-            Inputs.Add(item);
+            get;
+            private set;
+        }
 
-            InputData inputData = new InputData();
+        public double LastPreActivationOutput
+        {
+            get;
+            set;
+        }
+        
+        public void RegisterInput(Node item, double inputWeight)
+        {
+            WeightData inputData = new WeightData();
             inputData.Weight = inputWeight;
-            InputDataMap.Add(item, inputData);
-        }
-        
-        public void RegisterOutput(ComputationalNode item)
-        {
-            Outputs.Add(item);
-
-            OutputData outputData = new OutputData();
-            OutputDataMap.Add(item, outputData);
+            InputWeights.Add(item, inputData);
         }
 
-        public void UpdateWeightDeltas()
+        private double TotalBiasDelta
         {
-            foreach (ComputationalNode input in Inputs)
+            get;
+            set;
+        }
+
+        public void UpdateWeightDeltas(double learningRate)
+        {
+            foreach (Node input in InputWeights.Keys)
             {
-                InputDataMap[input].Weight += InputDataMap[input].TotalWeightDelta;
+                InputWeights[input].Weight -= learningRate * InputWeights[input].TotalWeightDelta;
+                InputWeights[input].TotalWeightDelta = 0;
             }
+
+            Bias -= learningRate * TotalBiasDelta;
+            TotalBiasDelta = 0;
+
+            // Revert values that are no longer relevant for this sequence
+            GetAndResetErrorSignalSum();
+
+            LastOutput = 0;
+            LastPreActivationOutput = 0;
         }
     }
 

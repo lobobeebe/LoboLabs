@@ -9,7 +9,7 @@ namespace LoboLabs.NeuralNet
         private static ClassLogger Logger = new ClassLogger(typeof(NeuralNetworkTrainer<Input>));
 
         private const int DEFAULT_MAX_EPOCHS = 100;
-        private const double DEFAULT_LEARNING_RATE = 0.05; // TODO: This doesn't do anything.
+        private const double DEFAULT_LEARNING_RATE = 1;
 
         public NeuralNetworkTrainer(Functions.ErrorFunction errorFunction)
         {
@@ -19,27 +19,32 @@ namespace LoboLabs.NeuralNet
             LearningRate = DEFAULT_LEARNING_RATE;
         }
         
-        private double CalculateMeanError(List<TrainingData<Input>> trainData, NeuralNetwork network)
+        protected double CalculateMeanError(List<TrainingData<Input>> trainData, NeuralNetwork network)
         {
             double error = 0.0;
             double sumError = 0.0;
 
-            for (int i = 0; i < trainData.Count; ++i)
+            if (trainData.Count > 0)
             {
-                List<double> expectedOutputs = trainData[i].ExpectedOutputs;
-                List<double> actualOutputs = new List<double>(expectedOutputs.Count); 
-
-                for (int j = 0; j < trainData[i].InputValues.Count; ++j)
+                for (int i = 0; i < trainData.Count; ++i)
                 {
-                    actualOutputs.Add(network.Compute(trainData[i].InputValues[j].ToList()));
+                    List<double> expectedOutputs = trainData[i].ExpectedOutputs;
+                    List<double> actualOutputs = new List<double>(expectedOutputs.Count);
+
+                    for (int j = 0; j < trainData[i].InputValues.Count; ++j)
+                    {
+                        actualOutputs.Add(network.Compute(trainData[i].InputValues[j].ToList()));
+                    }
+
+                    error = ErrorFunction.Error(expectedOutputs, actualOutputs);
+
+                    sumError += error;
                 }
 
-                error = ErrorFunction.Error(expectedOutputs, actualOutputs);
-
-                sumError += error;
+                sumError /= trainData.Count;
             }
 
-            return (trainData.Count > 0) ? (sumError / trainData.Count) : 0;
+            return sumError;
         }
 
         protected abstract List<TrainingData<Input>> CompileTrainingData();
@@ -76,14 +81,8 @@ namespace LoboLabs.NeuralNet
 
             for (int epoch = 0; epoch < MaxEpochs; ++epoch)
             {
-                // Print out Mean Error for debug purposes
-                if (errInterval == 0 || epoch % errInterval == 0)
-                {
-                    double meanError = CalculateMeanError(trainingData, network);
-                    Logger.Debug("Epoch " + epoch + ":  Error = " +
-                        meanError);
-                }
-
+                double sumError = 0;
+                
                 // Each Training Datum has a list of inputs, ie. vectors, that will be interpreted as a series.
                 for (int trainingDatumIndex = 0; trainingDatumIndex < trainingData.Count; ++trainingDatumIndex)
                 {
@@ -96,34 +95,61 @@ namespace LoboLabs.NeuralNet
 
                     for (int seriesIndex = 0; seriesIndex < inputs.Count; ++seriesIndex)
                     {
-                        actualOutputs[seriesIndex] = network.Compute(inputs[seriesIndex].ToList());
+                        actualOutputs.Add(network.Compute(inputs[seriesIndex].ToList()));
                     }
+
+                    double seriesSumError = 0;
 
                     // Starting from the last output, compute the error and propogate it back through the network
                     for (int seriesIndex = inputs.Count - 1; seriesIndex >= 0; --seriesIndex)
                     {
                         // Ei = ExpectedAi - ActualAi
-                        double outputError = expectedOutputs[seriesIndex] - actualOutputs[seriesIndex];
+                        double outputError = actualOutputs[seriesIndex] - expectedOutputs[seriesIndex];
+                        seriesSumError += outputError;
 
-                        // Calculate the Actuator's Error Signals since it is the last
-                        network.Actuator.ProcessErrorSignal(outputError);
-                        network.Actuator.CalculateErrorSignals(LearningRate);
+                        // Artifically add the Actuator's Error Signals since it is the output
+                        // TODO: Change when multiple actuators are allowed
+                        network.GetActuator().AddErrorSignal(outputError);
 
                         // The actuator has updated all of the Error Signals of the hidden nodes
-                        for (int neuronIndex = 0; neuronIndex < network.Neurons.Count; ++neuronIndex)
+                        for (int layerIndex = network.Neurons.Count - 1; layerIndex >= 0; --layerIndex)
                         {
-                            network.Neurons[neuronIndex].CalculateErrorSignals(LearningRate);
+                            for (int nodeIndex = 0; nodeIndex < network.Neurons[layerIndex].Count; ++nodeIndex)
+                            {
+                                network.Neurons[layerIndex][nodeIndex].CalculateErrorSignals();
+                                network.Neurons[layerIndex][nodeIndex].UpdateWeightDeltas(LearningRate);
+                            }
                         }
                     }
 
-                    // Solidify Training Results by updating weights of each node with their deltas
-                    network.Actuator.UpdateWeightDeltas();
-                    
-                    for (int neuronIndex = 0; neuronIndex < network.Neurons.Count; ++neuronIndex)
+                    if(inputs.Count > 0)
                     {
-                        network.Neurons[neuronIndex].UpdateWeightDeltas();
+                        sumError += seriesSumError / inputs.Count;
                     }
-                } 
+
+                    // Solidify Training Results by updating weights of each node with their deltas
+                    for (int layerIndex = 0; layerIndex < network.Neurons.Count; ++layerIndex)
+                    {
+                        for (int nodeIndex = 0; nodeIndex < network.Neurons[layerIndex].Count; ++nodeIndex)
+                        {
+                            //network.Neurons[layerIndex][nodeIndex].UpdateWeightDeltas(LearningRate);
+                        }
+                    }
+                }
+
+                if (trainingData.Count > 0)
+                {
+                    sumError /= trainingData.Count;
+                }
+
+                // Print out Mean Error for debug purposes
+                if (errInterval == 0 || epoch % errInterval == 0)
+                {
+                    Logger.Debug("Epoch " + epoch + ":  Error = " +
+                        sumError);
+                }
+
+                sumError = 0;
             }
         }
     }

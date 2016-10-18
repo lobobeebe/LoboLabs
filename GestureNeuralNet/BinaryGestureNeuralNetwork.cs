@@ -7,7 +7,7 @@ using LoboLabs.Utilities;
 namespace LoboLabs.GestureNeuralNet
 {
 
-    public class BinaryGestureNeuralNetwork : NeuralNetwork
+    public class BinaryGestureNeuralNetwork : NeuralNetwork, GestureScapeListener
     {
         private const double GESTURE_CONFIDENCE_THRESHOLD = 0.75;
         private const string DEFAULT_NAME = "Default Gesture";
@@ -60,6 +60,14 @@ namespace LoboLabs.GestureNeuralNet
         public void RegisterListener(GestureDetectionListener listener)
         {
             Listeners.Add(listener);
+        }
+
+        public void ProcessStartGesturing()
+        {
+        }
+
+        public void ProcessStopGesturing()
+        {
         }
     }
 

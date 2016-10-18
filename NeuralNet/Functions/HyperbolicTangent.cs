@@ -1,54 +1,52 @@
 ﻿using System;
 
-namespace LoboLabs
+namespace LoboLabs.NeuralNet.Functions
 {
-namespace NeuralNet
-{
-namespace Functions
-{
-
-/// <summary>
-/// Tanh Activation Function 
-/// TODO: Unit Tests
-/// </summary>
-public class HyperbolicTangent : ActivationFunction
-{
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    public HyperbolicTangent()
-    {
-    }
 
     /// <summary>
-    /// See AcitvationFunction.Apply(double input)
+    /// Tanh Activation Function 
+    /// TODO: Unit Tests
     /// </summary>
-    public override double Apply(double input)
+    public class HyperbolicTangent : ActivationFunction
     {
-        // This approximation is correct to 30 decimals.
-        if (input < -20.0)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public HyperbolicTangent()
         {
-            return -1.0;
         }
-        else if (input > 20.0)
+
+        /// <summary>
+        /// See AcitvationFunction.Apply(double input)
+        /// </summary>
+        public override double Apply(double input)
         {
-            return 1.0;
+            double output;
+
+            // This approximation is correct to 30 decimals.
+            if (input < -20.0)
+            {
+                output = -1.0;
+            }
+            else if (input > 20.0)
+            {
+                output = 1.0;
+            }
+            else
+            {
+                output = Math.Tanh(input);
+            }
+
+            return output;
         }
-        else
+
+        /// <summary>
+        /// See ActivationFunction.ApplyDerivative(double input)
+        /// </summary>
+        public override double ApplyDerivative(double input)
         {
-            return Math.Tanh(input);
+            return 1 - Math.Pow(Apply(input), 2);
+            //return (1 + input) * (1 - input);
         }
     }
-
-    /// <summary>
-    /// See ActivationFunction.ApplyDerivative(double input)
-    /// </summary>
-    public override double ApplyDerivative(double input)
-    {
-        return (1 + input) * (1 - input);
-    }
-}
-
-}
-}
 }

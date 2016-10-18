@@ -25,7 +25,7 @@ public abstract class Scape
         ScapeListeners.Remove(listener);
     }
 
-    private List<ScapeListener> ScapeListeners
+    protected List<ScapeListener> ScapeListeners
     {
         get;
         set;

@@ -52,7 +52,7 @@ public class SumSquaredError : ErrorFunction
             sumSquaredError += error * error;
         }
 
-        return sumSquaredError;
+        return .5 * sumSquaredError;
     }
 }
 
