@@ -1,15 +1,13 @@
 ﻿using System.Collections.Generic;
 
-namespace LoboLabs.Utilities
+namespace LoboLabs.NeuralNet
 { 
-
     /// <summary>
     /// TODO: Documentation
     /// TODO: Unit Tests
     /// </summary>
-    public interface NetworkInputType
+    public interface ScapeData
     {
-        List<double> ToList();
+        List<double> AsList();
     }
-
 }

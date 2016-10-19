@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace LoboLabs.Utilities
 {
 
-    public struct Vector : NetworkInputType
+    public struct Vector
     {
         private static ClassLogger Logger = new ClassLogger(typeof(Vector));
 

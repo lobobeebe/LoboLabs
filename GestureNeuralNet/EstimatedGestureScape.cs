@@ -1,0 +1,79 @@
+﻿using System;
+
+namespace LoboLabs.GestureNeuralNet
+{
+    using NeuralNet;
+    using Utilities;
+
+    /// <summary>
+    /// Data Scape for estimated gestures. Neural Networks require the same number of inputs every iteration.
+    /// Since it can't be guaranteed that a gesture will be exactly the same number of positions each iteration, 
+    /// this class is used to estimate every gesture down to a set number of positions by Midpoint Estimation.
+    /// </summary>
+    public class EstimatedGestureScape : Scape
+    {
+        private static ClassLogger Logger = new ClassLogger(typeof(EstimatedGestureScape));
+        
+        /// <summary>
+        /// Constructor. Takes a number of positions to which each input gesture will be estimated.
+        /// </summary>
+        /// <param name="numPositions">The number of positions down to which gestures will be estimated.</param>
+        /// <throws type="NotSupportedException">If the number of given positions is less than 2.</throws>
+        public EstimatedGestureScape(int numPositions)
+        {
+            NumPositions = numPositions;
+
+            // Throw for too few estimated positions
+            if (numPositions < 2)
+            {
+                throw new NotSupportedException("The number of estimated positions must not be less than 2.");
+            }
+        }
+
+        /// <summary>
+        /// The current gesture information.
+        /// </summary>
+        private EstimatedGestureData CurrentGesture
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// The number of positions down to which gestures will be estimated.
+        /// </summary>
+        private int NumPositions
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Indicates to the scape that gesture information will now be input.
+        /// </summary>
+        public void StartGesturing()
+        {
+            // Clear the Current Gesture
+            CurrentGesture = new EstimatedGestureData(NumPositions);
+        }
+
+        /// <summary>
+        /// Indicates to the scape that gesture information has concluded.
+        /// </summary>
+        public void StopGesturing()
+        {
+            NotifyDataReceived(CurrentGesture);
+        }
+
+        /// <summary>
+        /// Adds a position point to the current gesture.
+        /// Undefined behavior if called without a preceeding "StartGesturing"
+        /// </summary>
+        /// <param name="position">The new position to add to the current gesture.</param>
+        public void UpdateGesturePosition(Vector position)
+        {
+            CurrentGesture.AddPosition(position);
+        }
+    }
+
+}

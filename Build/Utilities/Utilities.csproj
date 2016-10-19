@@ -42,17 +42,11 @@
     <Compile Include="..\..\Utilities\ClassLogger.cs">
       <Link>ClassLogger.cs</Link>
     </Compile>
-    <Compile Include="..\..\Utilities\DoublesPair.cs">
-      <Link>DoublesPair.cs</Link>
-    </Compile>
     <Compile Include="..\..\Utilities\LogWriter.cs">
       <Link>LogWriter.cs</Link>
     </Compile>
     <Compile Include="..\..\Utilities\MathUtils.cs">
       <Link>MathUtils.cs</Link>
-    </Compile>
-    <Compile Include="..\..\Utilities\NetworkInputType.cs">
-      <Link>NetworkInputType.cs</Link>
     </Compile>
     <Compile Include="..\..\Utilities\Pair.cs">
       <Link>Pair.cs</Link>

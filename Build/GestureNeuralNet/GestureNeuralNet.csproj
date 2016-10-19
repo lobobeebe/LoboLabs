@@ -40,8 +40,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\GestureNeuralNet\GestureScape.cs">
-      <Link>GestureScape.cs</Link>
+    <Compile Include="..\..\GestureNeuralNet\EstimatedGestureData.cs">
+      <Link>EstimatedGestureData.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GestureNeuralNet\EstimatedGestureScape.cs">
+      <Link>EstimatedGestureScape.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

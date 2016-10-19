@@ -11,12 +11,12 @@ namespace LoboLabs.NeuralNet
         {
         }
 
-        public delegate void ScapeDataHandler(object Sender, List<double> data);
+        public delegate void ScapeDataHandler(object Sender, ScapeData scapeData);
         public event ScapeDataHandler DataReceived;
 
-        protected void NotifyDataReceived(List<double> data)
+        protected void NotifyDataReceived(ScapeData scapeData)
         {
-            DataReceived(this, data);
+            DataReceived(this, scapeData);
         }
     }
 }

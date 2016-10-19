@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace LoboLabs.GestureNeuralNet.TestGestureNeuralNetwork
+namespace LoboLabs.GestureNeuralNet.Test
 {
     using Utilities;
     using NUnit.Framework;
@@ -10,7 +10,7 @@ namespace LoboLabs.GestureNeuralNet.TestGestureNeuralNetwork
     [TestFixture]
     public class TestGestureNeuralNetwork
     {
-        private GestureScape mScape;
+        private EstimatedGestureScape mScape;
         private NeuralNetworkTrainer mTrainer;
         private NeuralNetworkGenerator mGenerator;
 
@@ -29,7 +29,7 @@ namespace LoboLabs.GestureNeuralNet.TestGestureNeuralNetwork
         {
             OUTPUT_NAMES = new List<string>() { PUNCH_NAME, CIRCLE_NAME, SWIPE_NAME};
 
-            mScape = new GestureScape(10);
+            mScape = new EstimatedGestureScape(10);
             mTrainer = new NeuralNetworkTrainer(new SumSquaredError(), 30, OUTPUT_NAMES);
             mGenerator = new NeuralNetworkGenerator();
 
@@ -78,9 +78,8 @@ namespace LoboLabs.GestureNeuralNet.TestGestureNeuralNetwork
             mScape.StartGesturing();
             mScape.UpdateGesturePosition(new Vector(0, 0, 0));
 
-            const float VARIANCE = .05f;
-
-            for (double angle = 0; angle < 2 * System.Math.PI; angle += 2 * System.Math.PI / (numPoints - 1))
+            for (double angle = 0; angle < 2 * System.Math.PI;
+                angle += 2 * System.Math.PI / (numPoints - 1))
             {
                 Vector position = new Vector((float)System.Math.Cos(angle) * radius, (float)System.Math.Sin(angle) * radius, 0);
                 mScape.UpdateGesturePosition(position);
@@ -175,11 +174,11 @@ namespace LoboLabs.GestureNeuralNet.TestGestureNeuralNetwork
             }
         }
 
-        public void ProcessResult(object sender, List<double> data)
+        public void ProcessResult(object sender, ScapeData input, List<double> output)
         {
-            for (int datum = 0; datum < data.Count; ++datum)
+            for (int datum = 0; datum < output.Count; ++datum)
             {
-                if(data[datum] > .75)
+                if(output[datum] > .75)
                 {
                     mDetectedGestureQueue.Enqueue(OUTPUT_NAMES[datum]);
                     break;

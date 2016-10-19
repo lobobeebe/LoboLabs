@@ -44,6 +44,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\TestGestureNeuralNet\TestEstimatedGestureData.cs">
+      <Link>TestEstimatedGestureData.cs</Link>
+    </Compile>
+    <Compile Include="..\..\TestGestureNeuralNet\TestEstimatedGestureScape.cs">
+      <Link>TestEstimatedGestureScape.cs</Link>
+    </Compile>
     <Compile Include="..\..\TestGestureNeuralNet\TestGestureNeuralNetwork.cs">
       <Link>TestGestureNeuralNetwork.cs</Link>
     </Compile>
