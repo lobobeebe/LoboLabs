@@ -3,13 +3,15 @@
 using LoboLabs.Utilities;
 namespace LoboLabs.NeuralNet
 {
-
     /// <summary>
     /// Represents a generic NeuralNetwork
     /// </summary>
-    public abstract class NeuralNetwork : ScapeListener
+    public class NeuralNetwork
     {
         private static ClassLogger Logger = new ClassLogger(typeof(NeuralNetwork));
+
+        public delegate void NeuralNetworkResultHandler(object sender, List<double> e);
+        public event NeuralNetworkResultHandler ResultReceived;
 
         /// <summary>
         /// Constructor
@@ -20,22 +22,20 @@ namespace LoboLabs.NeuralNet
             Neurons = new List<List<ComputationalNode>>();
         }
 
-        public ComputationalNode GetActuator()
+        public List<ComputationalNode> GetActuators()
         {
-            // TODO: Change to return multiple Actuators
-            ComputationalNode actuator = null;
+            List<ComputationalNode> actuators = null;
 
             if(Neurons != null && Neurons.Count > 0)
             {
-                List<ComputationalNode> actuators = Neurons[Neurons.Count - 1];
-                actuator = actuators[0];
+                actuators = Neurons[Neurons.Count - 1];
             }
             else
             {
                 Logger.Error("Cannot get actuators from empty network.");
             }
 
-            return actuator;
+            return actuators;
         }
 
         /// <summary>
@@ -43,9 +43,9 @@ namespace LoboLabs.NeuralNet
         /// </summary>
         /// <param name="inputs"></param>
         /// <returns></returns>
-        public double Compute(List<double> inputs)
+        public List<double> Compute(List<double> inputs)
         {
-            double output = 0;
+            List<double> outputs = new List<double>();
 
             if (Neurons.Count > 0 && Neurons[Neurons.Count - 1].Count > 0 && inputs != null)
             {
@@ -65,10 +65,12 @@ namespace LoboLabs.NeuralNet
                             Neurons[layerIndex][nodeIndex].Compute();
                         }
                     }
-
-                    // TODO: Change this when multiple actuators are allowed
-                    List<ComputationalNode> actuators = Neurons[Neurons.Count - 1];
-                    output = actuators[0].LastOutput;
+                    
+                    List<ComputationalNode> actuators = GetActuators();
+                    for (int actuatorIndex = 0; actuatorIndex < actuators.Count; ++actuatorIndex)
+                    {
+                        outputs.Add(actuators[actuatorIndex].LastOutput);
+                    }
                 }
                 else
                 {
@@ -80,7 +82,7 @@ namespace LoboLabs.NeuralNet
                 Logger.Error("Cannot Compute: {Inputs: " + inputs + ", Neurons: " + Neurons + "}");
             }
 
-            return output;
+            return outputs;
         }
 
         /// <summary>
@@ -92,13 +94,10 @@ namespace LoboLabs.NeuralNet
             set;
         }
 
-        public void ProcessData(List<double> data)
+        public void ProcessData(object sender, List<double> data)
         {
-            // Compute on the input data
-            OnResult(Compute(data));
+            ResultReceived(this, Compute(data));
         }
-
-        protected abstract void OnResult(double result);
         
         /// <summary>
         /// Vector of sensors that belong to this Neural Net

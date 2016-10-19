@@ -1,44 +1,22 @@
 ﻿using System.Collections.Generic;
 
-namespace LoboLabs
-{ 
-namespace NeuralNet
+namespace LoboLabs.NeuralNet
 {
-
-/// <summary>
-/// Represents that Data that will be piped into a Neural Net
-/// </summary>
-public abstract class Scape
-{
-    public Scape()
+    /// <summary>
+    /// Represents that Data that will be piped into a Neural Net
+    /// </summary>
+    public abstract class Scape
     {
-        ScapeListeners = new List<ScapeListener>();
-    }
-
-    public void RegisterListener(ScapeListener listener)
-    {
-        ScapeListeners.Add(listener);
-    }
-
-    public void RemoveListener(ScapeListener listener)
-    {
-        ScapeListeners.Remove(listener);
-    }
-
-    protected List<ScapeListener> ScapeListeners
-    {
-        get;
-        set;
-    }
-
-    public void NotifyListeners(List<double> data)
-    {
-        foreach(ScapeListener listener in ScapeListeners)
+        public Scape()
         {
-            listener.ProcessData(data);
+        }
+
+        public delegate void ScapeDataHandler(object Sender, List<double> data);
+        public event ScapeDataHandler DataReceived;
+
+        protected void NotifyDataReceived(List<double> data)
+        {
+            DataReceived(this, data);
         }
     }
-}
-
-}
 }

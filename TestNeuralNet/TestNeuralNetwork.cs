@@ -3,18 +3,18 @@ using System.Collections.Generic;
 namespace LoboLabs.NeuralNet.TestNeuralNetwork
 {
     using NUnit.Framework;
-
+    /*
     [TestFixture]
     public class TestNeuralNetwork
     {
         private Mock.Scape mScape;
-        private Mock.NeuralNetwork mNeuralNet;
+        private NeuralNetwork mNeuralNet;
 
         [SetUp]
         public void SetUp()
         {
             mScape = new Mock.Scape();
-            mNeuralNet = new Mock.NeuralNetwork();
+            mNeuralNet = new NeuralNetwork();
         }
         
         [Test]
@@ -147,4 +147,5 @@ namespace LoboLabs.NeuralNet.TestNeuralNetwork
             Assert.AreEqual(0.108422, mNeuralNet.Compute(inputs), .000001);
         }
     }
+    */
 }

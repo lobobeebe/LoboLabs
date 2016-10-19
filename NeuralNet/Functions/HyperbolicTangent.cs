@@ -45,8 +45,8 @@ namespace LoboLabs.NeuralNet.Functions
         /// </summary>
         public override double ApplyDerivative(double input)
         {
-            return 1 - Math.Pow(Apply(input), 2);
-            //return (1 + input) * (1 - input);
+            //return 1 - Math.Pow(Apply(input), 2);
+            return (1 + input) * (1 - input);
         }
     }
 }

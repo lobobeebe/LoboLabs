@@ -1,5 +1,7 @@
 ﻿using LoboLabs.NeuralNet;
 using LoboLabs.Utilities;
+using System.Collections.Generic;
+using System;
 
 namespace LoboLabs.GestureNeuralNet
 {
@@ -8,56 +10,65 @@ namespace LoboLabs.GestureNeuralNet
     {
         private static ClassLogger Logger = new ClassLogger(typeof(GestureScape));
 
-        private Vector mLastPosition;
-        private bool mHasLastPosition;
+        private List<Vector> mCurrentData;
+        private int mNumPoints;
 
-        public GestureScape()
+        public GestureScape(int numPoints)
         {
-            mLastPosition = new Vector(0, 0, 0);
-        }
+            mNumPoints = numPoints;
+            mCurrentData = new List<Vector>();
 
-        private void NotifyStartGesturing()
-        {
-            foreach (ScapeListener listener in ScapeListeners)
+            if (numPoints < 4)
             {
-                (listener as GestureScapeListener).ProcessStartGesturing();
-            }
-        }
-
-        private void NotifyStopGesturing()
-        {
-            foreach (ScapeListener listener in ScapeListeners)
-            {
-                (listener as GestureScapeListener).ProcessStopGesturing();
+                throw new NotImplementedException();
             }
         }
 
         public virtual void StartGesturing()
         {
-            mHasLastPosition = false;
-
-            NotifyStartGesturing();
+            mCurrentData.Clear();
         }
 
         public virtual void StopGesturing()
         {
-            NotifyStopGesturing();
+            List<double> convertedData = new List<double>();
+            
+            // TODO: Can this be more efficient?
+            // Estimate the gesture down to the set number of points + 1 in order to 
+            // result in 'points' number of direction vectors
+            while (mCurrentData.Count > mNumPoints + 1)
+            {
+                List<Vector> estimatedGesture = new List<Vector>(mCurrentData.Count - 1);
+
+                // Add first location to preserve start location
+                estimatedGesture.Add(mCurrentData[0]);
+
+                // Midpoint estimation
+                for(int datum = 1; datum < mCurrentData.Count - 2; ++datum)
+                {
+                    Vector midpoint = ((mCurrentData[datum + 1] - mCurrentData[datum]) / 2) + mCurrentData[datum];
+                    estimatedGesture.Add(midpoint);
+                }
+
+                // Add last location to preserve end location
+                estimatedGesture.Add(mCurrentData[mCurrentData.Count - 1]);
+
+                mCurrentData = estimatedGesture;
+            }
+
+            // Convert to directional vectors
+            for (int datum = 0; datum < mCurrentData.Count - 1; ++datum)
+            {
+                Vector difference = (mCurrentData[datum + 1] - mCurrentData[datum]).Normalized();
+                convertedData.AddRange(difference.ToList());
+            }
+
+            NotifyDataReceived(convertedData);
         }
 
         public virtual void UpdateGesturePosition(Vector position)
         {
-            // If there isn't a saved position, set the last position to the current position, effectively inputting a zero vector
-            if(!mHasLastPosition)
-            {
-                mLastPosition = position;
-            }
-
-            // Notify listeners of the new relative position
-            NotifyListeners((position - mLastPosition).ToList());
-
-            // Update last position and set has position
-            mLastPosition = position;
-            mHasLastPosition = true;
+            mCurrentData.Add(position);
         }
     }
 

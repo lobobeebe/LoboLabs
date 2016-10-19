@@ -80,7 +80,7 @@ namespace LoboLabs.NeuralNet
             }
 
             // Add the bias
-            //LastPreActivationOutput += Bias;
+            LastPreActivationOutput += Bias;
 
             // Post-Processing
             LastOutput = ActivationFunction.Apply(LastPreActivationOutput);

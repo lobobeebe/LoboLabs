@@ -7,15 +7,15 @@ namespace LoboLabs.Utilities
     /// TODO: Documentation
     /// TODO: Unit Tests
     /// </summary>
-    public class TrainingData<Input> where Input : NetworkInputType
+    public class TrainingData
     {
-        public TrainingData(List<Input> inputs, List<double> expectedOutputs)
+        public TrainingData(List<double> inputs, List<double> expectedOutputs)
         {
             InputValues = inputs;
             ExpectedOutputs = expectedOutputs;
         }
 
-        public List<Input> InputValues
+        public List<double> InputValues
         {
             get;
             set;
