@@ -52,9 +52,9 @@ namespace LoboLabs.NeuralNet.Test
             double previousOutput = mNode.LastOutput;
             Assert.AreEqual(0.244918, mNode.LastOutput, .000001);
 
-            // Verify that for 10 cycles, the output of the node is getting closer and closer to the desired target
+            // Verify that for 100 cycles, the output of the node is getting closer and closer to the desired target
             double target = 1.5;
-            for (int i = 0; i < 10; ++i)
+            for (int i = 0; i < 100; ++i)
             {
                 mNode.Compute();
                 Assert.IsTrue(Math.Abs(mNode.LastOutput - target) <= Math.Abs(previousOutput - target));

@@ -130,12 +130,7 @@ namespace LoboLabs.GestureNeuralNet.TestGestureNeuralNetwork
             {
                 AddStraightData((int)MathUtils.NextRand(25, 35));
             }
-
-            // Generate a NeuralNet with a single hidden node
-            mGenerator.NumHidden = 1;
-            NeuralNetwork networkSingle = mGenerator.Generate(NUM_INPUT_VECTORS * NUM_VALUES_PER_VECTOR, NUM_OUTPUTS);
-            networkSingle.ResultReceived += ProcessResult;
-
+            
             // Generate a Gesture NeuralNet with three hidden nodes
             mGenerator.NumHidden = 3;
             NeuralNetwork networkMultiple = mGenerator.Generate(NUM_INPUT_VECTORS * NUM_VALUES_PER_VECTOR, NUM_OUTPUTS);
@@ -143,13 +138,11 @@ namespace LoboLabs.GestureNeuralNet.TestGestureNeuralNetwork
 
             // Train networks
             mTrainer.LearningRate = .2;
-            //mTrainer.TrainBackPropagation(networkSingle);
             mTrainer.TrainBackPropagation(networkMultiple);
 
             // Remove Trainer as listener and add Single hidden node NeuralNet as listener
             mScape.DataReceived -= mTrainer.ProcessData;
             mScape.DataReceived += networkMultiple.ProcessData;
-            //mScape.DataReceived += networkSingle.ProcessData;
 
             // Pass several Punch gestures to test the single hidden node network. It should recognize each one
             for (int i = 0; i < NUM_PUNCH_GESTURES; ++i)
@@ -159,6 +152,26 @@ namespace LoboLabs.GestureNeuralNet.TestGestureNeuralNetwork
                 string lastGestureDetected;
                 Assert.True(GetLastGestureDetected(out lastGestureDetected));
                 Assert.AreEqual("Punch", lastGestureDetected);
+            }
+
+            // Pass several Circle gestures to test the single hidden node network. It should recognize each one
+            for (int i = 0; i < NUM_CIRCLE_GESTURES; ++i)
+            {
+                AddCircleData(1, 30);
+
+                string lastGestureDetected;
+                Assert.True(GetLastGestureDetected(out lastGestureDetected));
+                Assert.AreEqual("Circle", lastGestureDetected);
+            }
+
+            // Pass several Swipe gestures to test the single hidden node network. It should recognize each one
+            for (int i = 0; i < NUM_SWIPE_GESTURES; ++i)
+            {
+                AddSwipeData(30);
+
+                string lastGestureDetected;
+                Assert.True(GetLastGestureDetected(out lastGestureDetected));
+                Assert.AreEqual("Swipe", lastGestureDetected);
             }
         }
 
