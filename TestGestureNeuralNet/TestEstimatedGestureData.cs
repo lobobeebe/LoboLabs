@@ -36,7 +36,7 @@ namespace LoboLabs.GestureNeuralNet.Test
             
             List<double> list = data.AsList();
             Assert.AreEqual(15, list.Count);
-            Assert.AreEqual(new List<double>() { 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1 }, list);
+            Assert.AreEqual(new List<double>() { 0, 0, 2, 0, 2, 0, 2, 0, 0, 0, 2, 0, 0, 0, 2 }, list);
 
             data = new EstimatedGestureData(4);
             data.AddPosition(new Vector(0, 0, 0));
@@ -51,14 +51,13 @@ namespace LoboLabs.GestureNeuralNet.Test
 
             list = data.AsList();
             Assert.AreEqual(12, list.Count);
-
-            double value = Math.Sqrt(1 / 3.0);
+            
             List<double> expectedList = new List<double>()
             {
-                value, value, value,
-                value, value, value,
-                value, value, value,
-                value, value, value
+                2, 2, 2,
+                2, 2, 2,
+                2, 2, 2,
+                2, 2, 2,
             };
 
             double delta = 0.00001;

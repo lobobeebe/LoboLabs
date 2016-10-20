@@ -55,51 +55,40 @@ namespace LoboLabs.GestureNeuralNet
 
         /// <summary>
         /// Returns the Gesture Data as a list of doubles representing an estimated version of the gesture.
-        /// This function estimates the gestures using Midpoint Estimation. In Iterative Midpoint Estimation,
-        /// each iteration reduces the number of positions by 1. A single iteration is as follows:
-        /// * Create a new vector of positions, localPositions
-        /// * Add the first position of the original gesture to localPositions
-        /// * For each point, i, where i = 1 -> numLocalPositions - 2
-        /// ** Add the midpoint between i and i + 1 to localPositions
-        /// This process is repeated until the desired number of positions in the estimated gesture is reached.
-        /// Finally, the estimated gesture is converted into directional vectors.
-        /// A directional vector is simply the normalized difference between two points.
+        /// This function estimates the gestures using Pushback Estimation
         /// </summary>
         /// <returns></returns>
         public List<double> AsList()
         {
-            List<Vector> localPositions = new List<Vector>(Positions);
             List<double> convertedData = new List<double>();
 
-            // TODO: Can this be more efficient?
-            // Estimate the gesture down to the set number of points + 1 in order to 
-            // result in 'points' number of direction vectors
-            while (localPositions.Count > NumPositions + 1)
+            if (Positions.Count > NumPositions)
             {
-                List<Vector> estimatedGesture = new List<Vector>(localPositions.Count - 1);
+                List<Vector> localPositions = new List<Vector>(Positions);
 
-                // Add first position
-                estimatedGesture.Add(localPositions[0]);
-
-                // Midpoint estimation
-                for (int datum = 1; datum < localPositions.Count - 2; ++datum)
+                // TODO: Can this be more efficient?
+                // Estimate the gesture down to the set number of points + 1 in order to 
+                // result in 'points' number of direction vectors
+                while (localPositions.Count > NumPositions + 1)
                 {
-                    Vector midpoint = ((localPositions[datum + 1] - localPositions[datum]) / 2)
-                        + localPositions[datum];
-                    estimatedGesture.Add(midpoint);
+                    // Pushback estimation
+                    // * For each point index, i, push point i by (i / (n - 2)) times the difference between the points
+                    // * Remove the last point
+                    for (int datum = 1; datum < localPositions.Count - 1; ++datum)
+                    {
+                        Vector difference = (localPositions[datum + 1] - localPositions[datum]);
+                        localPositions[datum] += difference * ((float)datum / (localPositions.Count - 2));
+                    }
+
+                    localPositions.RemoveAt(localPositions.Count - 1);
                 }
 
-                // Add last position
-                estimatedGesture.Add(localPositions[localPositions.Count - 1]);
-
-                localPositions = estimatedGesture;
-            }
-
-            // Convert to directional vectors
-            for (int datum = 0; datum < localPositions.Count - 1; ++datum)
-            {
-                Vector difference = (localPositions[datum + 1] - localPositions[datum]).Normalized();
-                convertedData.AddRange(difference.ToList());
+                // Convert to directional vectors
+                for (int datum = 0; datum < localPositions.Count - 1; ++datum)
+                {
+                    Vector difference = (localPositions[datum + 1] - localPositions[datum]);
+                    convertedData.AddRange(difference.ToList());
+                }
             }
 
             return convertedData;

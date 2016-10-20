@@ -21,19 +21,32 @@ namespace LoboLabs.GestureNeuralNet
         /// <throws type="NotSupportedException">If the number of given positions is less than 2.</throws>
         public EstimatedGestureScape(int numPositions)
         {
-            NumPositions = numPositions;
-
             // Throw for too few estimated positions
             if (numPositions < 2)
             {
                 throw new NotSupportedException("The number of estimated positions must not be less than 2.");
             }
+
+            NumPositions = numPositions;
+
+            // Initializes the current gesture and the current number of positions
+            StartGesturing();
         }
 
         /// <summary>
         /// The current gesture information.
         /// </summary>
         private EstimatedGestureData CurrentGesture
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// The number of positions updated since the last 'StartGesturing' was called.
+        /// If 'StartGesturing' was never called, the number of positions updated since initialization.
+        /// </summary>
+        private int CurrentNumPositions
         {
             get;
             set;
@@ -55,14 +68,19 @@ namespace LoboLabs.GestureNeuralNet
         {
             // Clear the Current Gesture
             CurrentGesture = new EstimatedGestureData(NumPositions);
+            CurrentNumPositions = 0;
         }
 
         /// <summary>
         /// Indicates to the scape that gesture information has concluded.
+        /// Will notify any listeners of gesture data if the number of positions required is exceeded
         /// </summary>
         public void StopGesturing()
         {
-            NotifyDataReceived(CurrentGesture);
+            if (CurrentNumPositions > NumPositions)
+            {
+                NotifyDataReceived(CurrentGesture);
+            }
         }
 
         /// <summary>
@@ -73,6 +91,7 @@ namespace LoboLabs.GestureNeuralNet
         public void UpdateGesturePosition(Vector position)
         {
             CurrentGesture.AddPosition(position);
+            CurrentNumPositions++;
         }
     }
 

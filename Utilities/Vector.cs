@@ -12,11 +12,11 @@ namespace LoboLabs.Utilities
         public float Y;
         public float Z;
 
-        public Vector(float X, float Y, float Z)
+        public Vector(float x, float y, float z)
         {
-            this.X = X;
-            this.Y = Y;
-            this.Z = Z;
+            X = x;
+            Y = y;
+            Z = z;
         }
 
         public static Vector FromList(List<double> List)
@@ -47,9 +47,9 @@ namespace LoboLabs.Utilities
             return new List<double>() { X, Y, Z };
         }
 
-        public static Vector operator-(Vector subtracted, Vector subtractor)
+        public static Vector operator-(Vector lhs, Vector rhs)
         {
-            return new Vector(subtracted.X - subtractor.X, subtracted.Y - subtractor.Y, subtracted.Z - subtractor.Z);
+            return new Vector(lhs.X - rhs.X, lhs.Y - rhs.Y, lhs.Z - rhs.Z);
         }
 
         public static Vector operator +(Vector lhs, Vector rhs)
@@ -60,6 +60,11 @@ namespace LoboLabs.Utilities
         public static Vector operator /(Vector lhs, float rhs)
         {
             return new Vector(lhs.X / rhs, lhs.Y / rhs, lhs.Z / rhs);
+        }
+
+        public static Vector operator *(Vector lhs, float rhs)
+        {
+            return new Vector(lhs.X * rhs, lhs.Y * rhs, lhs.Z * rhs);
         }
     }
     
