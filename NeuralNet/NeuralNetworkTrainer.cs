@@ -93,11 +93,9 @@ namespace LoboLabs.NeuralNet
             set;
         }
 
-        public void ProcessData(object sender, ScapeData scapeData)
+        public void ProcessData(List<double> input)
         {
-            List<double> data = scapeData.AsList();
-
-            if(data.Count != mNumInputs)
+            if(input.Count != mNumInputs)
             {
                 throw new NotImplementedException("Mismatch number of inputs and the data count received.");
             }
@@ -118,7 +116,7 @@ namespace LoboLabs.NeuralNet
                     }
                 }
 
-                mTrainingData.Add(new TrainingData(data, outputs));
+                mTrainingData.Add(new TrainingData(input, outputs));
             }
             else
             {

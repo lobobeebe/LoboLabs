@@ -10,16 +10,13 @@ namespace LoboLabs.GestureNeuralNet.Test
     [TestFixture]
     public class TestGestureNeuralNetwork
     {
-        private EstimatedGestureScape mScape;
-        private NeuralNetworkTrainer mTrainer;
-        private NeuralNetworkGenerator mGenerator;
+        GestureDetectionManager mDetectionManager;
 
         private Queue<string> mDetectedGestureQueue;
 
         private const string PUNCH_NAME = "Punch";
         private const string SWIPE_NAME = "Swipe";
         private const string CIRCLE_NAME = "Circle";
-        private List<string> OUTPUT_NAMES;
         private const int NUM_INPUT_VECTORS = 10;
         private const int NUM_VALUES_PER_VECTOR = 3;
         private const int NUM_OUTPUTS = 3;
@@ -27,22 +24,14 @@ namespace LoboLabs.GestureNeuralNet.Test
         [SetUp]
         public void SetUp()
         {
-            OUTPUT_NAMES = new List<string>() { PUNCH_NAME, CIRCLE_NAME, SWIPE_NAME};
-
-            mScape = new EstimatedGestureScape(10);
-            mTrainer = new NeuralNetworkTrainer(new SumSquaredError(), 30, OUTPUT_NAMES);
-            mGenerator = new NeuralNetworkGenerator();
-
+            mDetectionManager = new GestureDetectionManager();
             mDetectedGestureQueue = new Queue<string>();
-            
-            // Add the trainer as a listener to the scape
-            mScape.DataReceived += mTrainer.ProcessData;
         }
         
         public void AddStraightData(int numPoints)
         {
-            mScape.StartGesturing();
-            mScape.UpdateGesturePosition(new Vector(0, 0, 0));
+            mDetectionManager.StartRightHandGesturing();
+            mDetectionManager.UpdateRightHandLocation(new Vector(0, 0, 0));
 
             const float VARIANCE = .3f;
             float currentPosition = 0;
@@ -50,16 +39,16 @@ namespace LoboLabs.GestureNeuralNet.Test
             for (int i = 0; i < numPoints - 1; ++i)
             {
                 currentPosition += (float)MathUtils.NextRand(1 - VARIANCE, 1 + VARIANCE);
-                mScape.UpdateGesturePosition(new Vector(0, 0, currentPosition));
+                mDetectionManager.UpdateRightHandLocation(new Vector(0, 0, currentPosition));
             }
 
-            mScape.StopGesturing();
+            mDetectionManager.StopRightHandGesturing();
         }
 
         public void AddSwipeData(int numPoints)
         {
-            mScape.StartGesturing();
-            mScape.UpdateGesturePosition(new Vector(0, 0, 0));
+            mDetectionManager.StartRightHandGesturing();
+            mDetectionManager.UpdateRightHandLocation(new Vector(0, 0, 0));
 
             const float VARIANCE = .3f;
             float currentPosition = 0;
@@ -67,47 +56,47 @@ namespace LoboLabs.GestureNeuralNet.Test
             for (int i = 0; i < numPoints - 1; ++i)
             {
                 currentPosition += (float)MathUtils.NextRand(1 - VARIANCE, 1 + VARIANCE);
-                mScape.UpdateGesturePosition(new Vector(0, currentPosition, 0));
+                mDetectionManager.UpdateRightHandLocation(new Vector(0, currentPosition, 0));
             }
 
-            mScape.StopGesturing();
+            mDetectionManager.StopRightHandGesturing();
         }
 
         public void AddCircleData(float radius, int numPoints)
         {
-            mScape.StartGesturing();
-            mScape.UpdateGesturePosition(new Vector(0, 0, 0));
+            mDetectionManager.StartRightHandGesturing();
+            mDetectionManager.UpdateRightHandLocation(new Vector(0, 0, 0));
 
             for (double angle = 0; angle < 2 * System.Math.PI;
                 angle += 2 * System.Math.PI / (numPoints - 1))
             {
                 Vector position = new Vector((float)System.Math.Cos(angle) * radius, (float)System.Math.Sin(angle) * radius, 0);
-                mScape.UpdateGesturePosition(position);
+                mDetectionManager.UpdateRightHandLocation(position);
             }
 
-            mScape.StopGesturing();
+            mDetectionManager.StopRightHandGesturing();
         }
 
         public void AddRandomData(float radius, int numPoints)
         {
-            mScape.StartGesturing();
-            mScape.UpdateGesturePosition(new Vector(0, 0, 0));
+            mDetectionManager.StartRightHandGesturing();
+            mDetectionManager.UpdateRightHandLocation(new Vector(0, 0, 0));
 
             for (int i = 0; i < numPoints - 1; ++i)
             {
                 float randomAngle = (float)MathUtils.NextRand(0, 2 * System.Math.PI);
-                mScape.UpdateGesturePosition(new Vector((float)System.Math.Cos(randomAngle) * radius, 
+                mDetectionManager.UpdateRightHandLocation(new Vector((float)System.Math.Cos(randomAngle) * radius, 
                     (float)System.Math.Sin(randomAngle) * radius, (float)System.Math.Sin(randomAngle) * radius));
             }
 
-            mScape.StopGesturing();
+            mDetectionManager.StopRightHandGesturing();
         }
         
         [Test]
         public void SingleGesture()
         {
             // Teach Circle Gestures
-            mTrainer.CurrentOutputName = "Circle";
+            mDetectionManager.StartTrainingRightHandGestureName("Circle");
             const int NUM_CIRCLE_GESTURES = 30;
             for (int i = 0; i < NUM_CIRCLE_GESTURES; ++i)
             {
@@ -115,7 +104,7 @@ namespace LoboLabs.GestureNeuralNet.Test
             }
 
             // Teach Swipe Gestures
-            mTrainer.CurrentOutputName = "Swipe";
+            mDetectionManager.StartTrainingRightHandGestureName("Swipe");
             const int NUM_SWIPE_GESTURES = 30;
             for (int i = 0; i < NUM_SWIPE_GESTURES; ++i)
             {
@@ -123,26 +112,17 @@ namespace LoboLabs.GestureNeuralNet.Test
             }
 
             // Teach Punch Gestures
-            mTrainer.CurrentOutputName = "Punch";
+            mDetectionManager.StartTrainingRightHandGestureName("Punch");
             const int NUM_PUNCH_GESTURES = 30;
             for (int i = 0; i < NUM_PUNCH_GESTURES; ++i)
             {
                 AddStraightData((int)MathUtils.NextRand(25, 35));
             }
+
+            // Finalize the DetectionManager's training
+            mDetectionManager.FinalizeTraining();
+            mDetectionManager.RightHandGestureDetected += OnGestureDetected;
             
-            // Generate a Gesture NeuralNet with three hidden nodes
-            mGenerator.NumHidden = 3;
-            NeuralNetwork networkMultiple = mGenerator.Generate(NUM_INPUT_VECTORS * NUM_VALUES_PER_VECTOR, NUM_OUTPUTS);
-            networkMultiple.ResultReceived += ProcessResult;
-
-            // Train networks
-            mTrainer.LearningRate = .2;
-            mTrainer.TrainBackPropagation(networkMultiple);
-
-            // Remove Trainer as listener and add Single hidden node NeuralNet as listener
-            mScape.DataReceived -= mTrainer.ProcessData;
-            mScape.DataReceived += networkMultiple.ProcessData;
-
             // Pass several Punch gestures to test the single hidden node network. It should recognize each one
             for (int i = 0; i < NUM_PUNCH_GESTURES; ++i)
             {
@@ -174,16 +154,9 @@ namespace LoboLabs.GestureNeuralNet.Test
             }
         }
 
-        public void ProcessResult(object sender, ScapeData input, List<double> output)
+        public void OnGestureDetected(object sender, GestureDetectionEvent eventArgs)
         {
-            for (int datum = 0; datum < output.Count; ++datum)
-            {
-                if(output[datum] > .75)
-                {
-                    mDetectedGestureQueue.Enqueue(OUTPUT_NAMES[datum]);
-                    break;
-                }
-            }
+            mDetectedGestureQueue.Enqueue(eventArgs.Name);
         }
 
         public bool GetLastGestureDetected(out string lastGestureName)

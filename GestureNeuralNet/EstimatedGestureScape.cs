@@ -1,8 +1,7 @@
-﻿using System;
-
-namespace LoboLabs.GestureNeuralNet
+﻿namespace LoboLabs.GestureNeuralNet
 {
     using NeuralNet;
+    using System;
     using Utilities;
 
     /// <summary>

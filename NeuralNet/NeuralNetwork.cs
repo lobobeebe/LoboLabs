@@ -10,7 +10,7 @@ namespace LoboLabs.NeuralNet
     {
         private static ClassLogger Logger = new ClassLogger(typeof(NeuralNetwork));
 
-        public delegate void NeuralNetworkResultHandler(object sender, ScapeData input, List<double> output);
+        public delegate void NeuralNetworkResultHandler(object sender, List<double> input, List<double> output);
         public event NeuralNetworkResultHandler ResultReceived;
 
         /// <summary>
@@ -94,10 +94,9 @@ namespace LoboLabs.NeuralNet
             set;
         }
 
-        public void ProcessData(object sender, ScapeData scapeData)
-        {
-            List<double> data = scapeData.AsList(); 
-            ResultReceived(this, scapeData, Compute(data));
+        public void ProcessData(object sender, List<double> input)
+        { 
+            ResultReceived(this, input, Compute(input));
         }
         
         /// <summary>

@@ -43,17 +43,17 @@ public static class VectorUtils
     }
 
     /// <summary>
-    /// Returns the index of the most positive value. 
+    /// Returns the index of the most positive value or -1 If the vector is empty
     /// </summary>
     /// <param name="vector"></param>
-    /// <returns>The index of the most positive value - 0 If the vector is empty</returns>
+    /// <returns></returns>
     public static int MaxIndex(List<double> vector)
     {
 	    // index of largest value
-	    int maxIndex = 0;
+	    int maxIndex = -1;
 	    for (int i = 0; i < vector.Count; ++i)
 	    {
-		    if (vector[i] > vector[maxIndex])
+		    if (maxIndex < 0 || vector[i] > vector[maxIndex])
 		    {
 			    maxIndex = i;
 		    }

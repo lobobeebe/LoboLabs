@@ -43,8 +43,23 @@
     <Compile Include="..\..\GestureNeuralNet\EstimatedGestureData.cs">
       <Link>EstimatedGestureData.cs</Link>
     </Compile>
+    <Compile Include="..\..\GestureNeuralNet\EstimatedGestureDataSerializer.cs">
+      <Link>EstimatedGestureDataSerializer.cs</Link>
+    </Compile>
     <Compile Include="..\..\GestureNeuralNet\EstimatedGestureScape.cs">
       <Link>EstimatedGestureScape.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GestureNeuralNet\GestureData.cs">
+      <Link>GestureData.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GestureNeuralNet\GestureDataSerializer.cs">
+      <Link>GestureDataSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GestureNeuralNet\GestureDetectionEvent.cs">
+      <Link>GestureDetectionEvent.cs</Link>
+    </Compile>
+    <Compile Include="..\..\GestureNeuralNet\GestureDetectionManager.cs">
+      <Link>GestureDetectionManager.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
