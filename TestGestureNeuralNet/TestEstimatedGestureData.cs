@@ -12,21 +12,21 @@ namespace LoboLabs.GestureNeuralNet.Test
         [Test]
         public void Constructor()
         {
-            EstimatedGestureData data;
+            GestureData data;
             
             // Constructor should throw if the given number of estimated positions is below 2 
-            Assert.DoesNotThrow(() => data = new EstimatedGestureData(5));
-            Assert.DoesNotThrow(() => data = new EstimatedGestureData(50));
-            Assert.DoesNotThrow(() => data = new EstimatedGestureData(2));
+            Assert.DoesNotThrow(() => data = new GestureData(5));
+            Assert.DoesNotThrow(() => data = new GestureData(50));
+            Assert.DoesNotThrow(() => data = new GestureData(2));
 
-            Assert.Throws<NotSupportedException>(() => data = new EstimatedGestureData(1));
-            Assert.Throws<NotSupportedException>(() => data = new EstimatedGestureData(-10));
+            Assert.Throws<NotSupportedException>(() => data = new GestureData(1));
+            Assert.Throws<NotSupportedException>(() => data = new GestureData(-10));
         }
 
         [Test]
         public void AsList()
         {
-            EstimatedGestureData data = new EstimatedGestureData(5);
+            GestureData data = new GestureData(5);
             data.AddPosition(new Vector(0, 0, 0));
             data.AddPosition(new Vector(0, 0, 2));
             data.AddPosition(new Vector(0, 2, 2));
@@ -38,7 +38,7 @@ namespace LoboLabs.GestureNeuralNet.Test
             Assert.AreEqual(15, list.Count);
             Assert.AreEqual(new List<double>() { 0, 0, 2, 0, 2, 0, 2, 0, 0, 0, 2, 0, 0, 0, 2 }, list);
 
-            data = new EstimatedGestureData(4);
+            data = new GestureData(4);
             data.AddPosition(new Vector(0, 0, 0));
             data.AddPosition(new Vector(1, 1, 1));
             data.AddPosition(new Vector(2, 2, 2));

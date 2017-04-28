@@ -9,33 +9,33 @@
     [TestFixture]
     public class TestEstimatedGestureScape
     {
-        private Queue<EstimatedGestureData> mDetectedGestureQueue;
+        private Queue<GestureData> mDetectedGestureQueue;
 
         [SetUp]
         public void SetUp()
         {
-            mDetectedGestureQueue = new Queue<EstimatedGestureData>();
+            mDetectedGestureQueue = new Queue<GestureData>();
         }
 
         [Test]
         public void Constructor()
         {
-            EstimatedGestureScape scape;
+            GestureScape scape;
             
             // Constructor should throw if the given number of estimated positions is below 2 
-            Assert.DoesNotThrow(() => scape = new EstimatedGestureScape(5));
-            Assert.DoesNotThrow(() => scape = new EstimatedGestureScape(50));
-            Assert.DoesNotThrow(() => scape = new EstimatedGestureScape(2));
+            Assert.DoesNotThrow(() => scape = new GestureScape(5));
+            Assert.DoesNotThrow(() => scape = new GestureScape(50));
+            Assert.DoesNotThrow(() => scape = new GestureScape(2));
 
-            Assert.Throws<NotSupportedException>(() => scape = new EstimatedGestureScape(1));
-            Assert.Throws<NotSupportedException>(() => scape = new EstimatedGestureScape(-10));
+            Assert.Throws<NotSupportedException>(() => scape = new GestureScape(1));
+            Assert.Throws<NotSupportedException>(() => scape = new GestureScape(-10));
         }
 
         [Test]
         public void Gesturing()
         {
             const int NUM_POSITIONS = 5;
-            EstimatedGestureScape scape = new EstimatedGestureScape(NUM_POSITIONS);
+            GestureScape scape = new GestureScape(NUM_POSITIONS);
             scape.DataReceived += ReceiveData;
 
             // Make sure a call to Update does not throw when called before Start
@@ -59,7 +59,7 @@
             scape.StopGesturing();
 
             // Make sure the scape's listener's received an estimated gesture
-            EstimatedGestureData data;
+            GestureData data;
             Assert.True(GetLastGestureDetected(out data));
             List<double> dataList = data.AsList();
             Assert.AreEqual(NUM_POSITIONS * 3, dataList.Count);
@@ -89,13 +89,13 @@
 
         public void ReceiveData(object sender, ScapeData output)
         {
-            Assert.True(output.GetType() == typeof(EstimatedGestureData));
+            Assert.True(output.GetType() == typeof(GestureData));
 
-            mDetectedGestureQueue.Enqueue(output as EstimatedGestureData);
+            mDetectedGestureQueue.Enqueue(output as GestureData);
         }
 
 
-        public bool GetLastGestureDetected(out EstimatedGestureData gestureData)
+        public bool GetLastGestureDetected(out GestureData gestureData)
         {
             if (mDetectedGestureQueue.Count > 0)
             {

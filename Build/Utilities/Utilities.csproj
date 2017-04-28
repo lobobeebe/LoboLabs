@@ -51,9 +51,6 @@
     <Compile Include="..\..\Utilities\Pair.cs">
       <Link>Pair.cs</Link>
     </Compile>
-    <Compile Include="..\..\Utilities\TrainingData.cs">
-      <Link>TrainingData.cs</Link>
-    </Compile>
     <Compile Include="..\..\Utilities\Vector.cs">
       <Link>Vector.cs</Link>
     </Compile>

@@ -12,64 +12,66 @@ namespace LoboLabs.NeuralNet
         private const int DEFAULT_MAX_EPOCHS = 100;
         private const double DEFAULT_LEARNING_RATE = 1;
 
-        private List<TrainingData> mTrainingData;
+        private List<ScapeDataDefinition> mDefinitions;
         private int mNumInputs;
-        private List<string> mOutputNames;
-        private string mCurrentOutputName;
 
-        public NeuralNetworkTrainer(Functions.ErrorFunction errorFunction, int numInputs, List<string> ouputNames)
+        public NeuralNetworkTrainer(Functions.ErrorFunction errorFunction, int numInputs)
         {
-            if(ouputNames == null || ouputNames.Count == 0)
-            {
-                throw new NotImplementedException("Output names must be populated.");
-            }
-
             ErrorFunction = errorFunction;
             mNumInputs = numInputs;
-            mOutputNames = ouputNames;
-            mCurrentOutputName = mOutputNames[0];
 
-            mTrainingData = new List<TrainingData>();
+            mDefinitions = new List<ScapeDataDefinition>();
             MaxEpochs = DEFAULT_MAX_EPOCHS;
             LearningRate = DEFAULT_LEARNING_RATE;
         }
         
-        protected double CalculateMeanError(NeuralNetwork network)
+        protected double CalculateMeanError(NeuralNetwork network, List<TrainingData> trainingData)
         {
             double error = 0.0;
             double sumError = 0.0;
 
-            if (mTrainingData.Count > 0)
+            if (trainingData.Count > 0)
             {
-                for (int i = 0; i < mTrainingData.Count; ++i)
+                for (int i = 0; i < trainingData.Count; ++i)
                 {
-                    List<double> expectedOutputs = mTrainingData[i].ExpectedOutputs;
-                    List<double> actualOutputs = network.Compute(mTrainingData[i].InputValues);
+                    List<double> expectedOutputs = trainingData[i].ExpectedOutputs;
+                    List<double> actualOutputs = network.Compute(trainingData[i].InputValues);
 
                     error = ErrorFunction.Error(expectedOutputs, actualOutputs);
 
                     sumError += error;
                 }
 
-                sumError /= mTrainingData.Count;
+                sumError /= trainingData.Count;
             }
 
             return sumError;
         }
 
-        public string CurrentOutputName
+        public List<TrainingData> CreateTrainingDataFromDefinitions(List<ScapeDataDefinition> definitions)
         {
-            get
+            List<TrainingData> trainingDataList = new List<TrainingData>();
+            
+            for (int i = 0; i < definitions.Count; ++i)
             {
-                return mCurrentOutputName;
-            }
-            set
-            {
-                if(mOutputNames.Contains(value))
+                List<double> outputs = new List<double>(new double[definitions.Count]);
+
+                // Set the current index to 1 indicating that it is the correct answer
+                outputs[i] = 1.0;
+
+                foreach(ScapeData data in definitions[i].DataList)
                 {
-                    mCurrentOutputName = value;
+                    trainingDataList.Add(new TrainingData(data.AsList(), outputs));
                 }
             }
+
+            return trainingDataList;
+        }
+
+        public string CurrentOutputName
+        {
+            get;
+            set;
         }
         
         /// <summary>
@@ -79,6 +81,27 @@ namespace LoboLabs.NeuralNet
         {
             get;
             set;
+        }
+
+        private ScapeDataDefinition GetDataDefinitionByName(string name)
+        {
+            ScapeDataDefinition returnDefinition = null;
+            foreach (ScapeDataDefinition definition in mDefinitions)
+            {
+                if (definition.Name == name)
+                {
+                    returnDefinition = definition;
+                }
+            }
+
+            // If not found, create a new one and add it to the Definitions list
+            if (returnDefinition == null)
+            {
+                returnDefinition = new ScapeDataDefinition(name, mNumInputs);
+                mDefinitions.Add(returnDefinition);
+            }
+
+            return returnDefinition;
         }
 
         public double LearningRate
@@ -95,40 +118,17 @@ namespace LoboLabs.NeuralNet
 
         public void ProcessData(object sender, ScapeData scapeData)
         {
-            List<double> data = scapeData.AsList();
+            // Find or create the current Data Definition
+            ScapeDataDefinition currentDefinition = GetDataDefinitionByName(CurrentOutputName);
 
-            if(data.Count != mNumInputs)
-            {
-                throw new NotImplementedException("Mismatch number of inputs and the data count received.");
-            }
-
-            int nameIndex = mOutputNames.IndexOf(CurrentOutputName);
-            if(nameIndex >= 0 && nameIndex < mOutputNames.Count)
-            {
-                List<double> outputs = new List<double>();
-                for (int outputIndex = 0; outputIndex < mOutputNames.Count; ++outputIndex)
-                {
-                    if (outputIndex == nameIndex)
-                    {
-                        outputs.Add(1);
-                    }
-                    else
-                    {
-                        outputs.Add(0);
-                    }
-                }
-
-                mTrainingData.Add(new TrainingData(data, outputs));
-            }
-            else
-            {
-                throw new NotImplementedException("Current output name, " + CurrentOutputName +
-                    ", is not in the list of output names. Ignoring data.");
-            }
+            currentDefinition.AddScapeData(scapeData);
         }
 
         public void TrainBackPropagation(NeuralNetwork network)
         {
+            // Create the training data from ScapeDataDefintions
+            List<TrainingData> trainingData = CreateTrainingDataFromDefinitions(mDefinitions);
+
             // Interval to print error
             int errInterval = MaxEpochs / 10;
 
@@ -138,12 +138,12 @@ namespace LoboLabs.NeuralNet
                 if (errInterval == 0 || epoch % errInterval == 0)
                 {
                     Logger.Debug("Epoch " + epoch + ":  Error = " +
-                        CalculateMeanError(network));
+                        CalculateMeanError(network, trainingData));
                 }
                 
-                for (int trainingDatumIndex = 0; trainingDatumIndex < mTrainingData.Count; ++trainingDatumIndex)
+                for (int trainingDatumIndex = 0; trainingDatumIndex < trainingData.Count; ++trainingDatumIndex)
                 {
-                    TrainingData trainingDatum = mTrainingData[trainingDatumIndex];
+                    TrainingData trainingDatum = trainingData[trainingDatumIndex];
                     List<double> inputs = trainingDatum.InputValues;
                     List<double> expectedOutputs = trainingDatum.ExpectedOutputs;
 

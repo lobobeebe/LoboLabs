@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace LoboLabs.Utilities
+namespace LoboLabs.NeuralNet
 { 
 
     /// <summary>

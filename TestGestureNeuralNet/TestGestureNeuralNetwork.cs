@@ -10,7 +10,7 @@ namespace LoboLabs.GestureNeuralNet.Test
     [TestFixture]
     public class TestGestureNeuralNetwork
     {
-        private EstimatedGestureScape mScape;
+        private GestureScape mScape;
         private NeuralNetworkTrainer mTrainer;
         private NeuralNetworkGenerator mGenerator;
 
@@ -29,8 +29,8 @@ namespace LoboLabs.GestureNeuralNet.Test
         {
             OUTPUT_NAMES = new List<string>() { PUNCH_NAME, CIRCLE_NAME, SWIPE_NAME};
 
-            mScape = new EstimatedGestureScape(10);
-            mTrainer = new NeuralNetworkTrainer(new SumSquaredError(), 30, OUTPUT_NAMES);
+            mScape = new GestureScape(NUM_INPUT_VECTORS);
+            mTrainer = new NeuralNetworkTrainer(new SumSquaredError(), 30);
             mGenerator = new NeuralNetworkGenerator();
 
             mDetectedGestureQueue = new Queue<string>();
@@ -106,6 +106,14 @@ namespace LoboLabs.GestureNeuralNet.Test
         [Test]
         public void SingleGesture()
         {
+            // Teach Punch Gestures
+            mTrainer.CurrentOutputName = "Punch";
+            const int NUM_PUNCH_GESTURES = 30;
+            for (int i = 0; i < NUM_PUNCH_GESTURES; ++i)
+            {
+                AddStraightData((int)MathUtils.NextRand(25, 35));
+            }
+
             // Teach Circle Gestures
             mTrainer.CurrentOutputName = "Circle";
             const int NUM_CIRCLE_GESTURES = 30;
@@ -120,14 +128,6 @@ namespace LoboLabs.GestureNeuralNet.Test
             for (int i = 0; i < NUM_SWIPE_GESTURES; ++i)
             {
                 AddSwipeData((int)MathUtils.NextRand(25, 35));
-            }
-
-            // Teach Punch Gestures
-            mTrainer.CurrentOutputName = "Punch";
-            const int NUM_PUNCH_GESTURES = 30;
-            for (int i = 0; i < NUM_PUNCH_GESTURES; ++i)
-            {
-                AddStraightData((int)MathUtils.NextRand(25, 35));
             }
             
             // Generate a Gesture NeuralNet with three hidden nodes

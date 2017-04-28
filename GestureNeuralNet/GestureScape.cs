@@ -10,16 +10,16 @@ namespace LoboLabs.GestureNeuralNet
     /// Since it can't be guaranteed that a gesture will be exactly the same number of positions each iteration, 
     /// this class is used to estimate every gesture down to a set number of positions by Midpoint Estimation.
     /// </summary>
-    public class EstimatedGestureScape : Scape
+    public class GestureScape : Scape
     {
-        private static ClassLogger Logger = new ClassLogger(typeof(EstimatedGestureScape));
+        private static ClassLogger Logger = new ClassLogger(typeof(GestureScape));
         
         /// <summary>
         /// Constructor. Takes a number of positions to which each input gesture will be estimated.
         /// </summary>
         /// <param name="numPositions">The number of positions down to which gestures will be estimated.</param>
         /// <throws type="NotSupportedException">If the number of given positions is less than 2.</throws>
-        public EstimatedGestureScape(int numPositions)
+        public GestureScape(int numPositions)
         {
             // Throw for too few estimated positions
             if (numPositions < 2)
@@ -36,7 +36,7 @@ namespace LoboLabs.GestureNeuralNet
         /// <summary>
         /// The current gesture information.
         /// </summary>
-        private EstimatedGestureData CurrentGesture
+        private GestureData CurrentGesture
         {
             get;
             set;
@@ -67,7 +67,7 @@ namespace LoboLabs.GestureNeuralNet
         public void StartGesturing()
         {
             // Clear the Current Gesture
-            CurrentGesture = new EstimatedGestureData(NumPositions);
+            CurrentGesture = new GestureData(NumPositions);
             CurrentNumPositions = 0;
         }
 
