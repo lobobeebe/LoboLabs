@@ -46,7 +46,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LoboLabsNeuralNet\NeuralNet.csproj">
+    <ProjectReference Include="..\NeuralNet\NeuralNet.csproj">
       <Project>{0a579d7c-9762-40fc-8a8f-9f92cb8ed147}</Project>
       <Name>NeuralNet</Name>
     </ProjectReference>

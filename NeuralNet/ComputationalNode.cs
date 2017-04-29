@@ -4,7 +4,6 @@ using LoboLabs.Utilities;
 
 namespace LoboLabs.NeuralNet
 {
-    
     public class ComputationalNode : Node
     {
         private static ClassLogger Logger = new ClassLogger(typeof(ComputationalNode));

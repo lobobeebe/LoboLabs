@@ -1,5 +1,4 @@
-﻿
-namespace LoboLabs.NeuralNet
+﻿namespace LoboLabs.NeuralNet
 {
     /// <summary>
     /// Represents that Data that will be piped into a Neural Net

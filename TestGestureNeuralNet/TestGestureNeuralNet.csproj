@@ -57,7 +57,7 @@
       <Project>{9265f9f5-f937-41cb-804d-05e86e124e44}</Project>
       <Name>GestureNeuralNet</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LoboLabsNeuralNet\NeuralNet.csproj">
+    <ProjectReference Include="..\NeuralNet\NeuralNet.csproj">
       <Project>{0a579d7c-9762-40fc-8a8f-9f92cb8ed147}</Project>
       <Name>NeuralNet</Name>
     </ProjectReference>

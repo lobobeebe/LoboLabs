@@ -1,8 +1,4 @@
-﻿namespace LoboLabs
-{ 
-namespace NeuralNet
-{
-namespace Functions
+﻿namespace LoboLabs.NeuralNet.Functions
 {
 
 /// <summary>
@@ -25,6 +21,4 @@ public abstract class ActivationFunction
     public abstract double ApplyDerivative(double input);
 }
 
-}
-}
 }
