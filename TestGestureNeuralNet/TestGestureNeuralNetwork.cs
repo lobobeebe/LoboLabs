@@ -19,7 +19,6 @@ namespace LoboLabs.GestureNeuralNet.Test
         private const string PUNCH_NAME = "Punch";
         private const string SWIPE_NAME = "Swipe";
         private const string CIRCLE_NAME = "Circle";
-        private List<string> OUTPUT_NAMES;
         private const int NUM_INPUT_VECTORS = 10;
         private const int NUM_VALUES_PER_VECTOR = 3;
         private const int NUM_OUTPUTS = 3;
@@ -27,10 +26,8 @@ namespace LoboLabs.GestureNeuralNet.Test
         [SetUp]
         public void SetUp()
         {
-            OUTPUT_NAMES = new List<string>() { PUNCH_NAME, CIRCLE_NAME, SWIPE_NAME};
-
             mScape = new GestureScape(NUM_INPUT_VECTORS);
-            mTrainer = new NeuralNetworkTrainer(new SumSquaredError(), 30);
+            mTrainer = new NeuralNetworkTrainer(new SumSquaredError(), NUM_INPUT_VECTORS);
             mGenerator = new NeuralNetworkGenerator();
 
             mDetectedGestureQueue = new Queue<string>();
@@ -106,20 +103,20 @@ namespace LoboLabs.GestureNeuralNet.Test
         [Test]
         public void SingleGesture()
         {
-            // Teach Punch Gestures
-            mTrainer.CurrentOutputName = "Punch";
-            const int NUM_PUNCH_GESTURES = 30;
-            for (int i = 0; i < NUM_PUNCH_GESTURES; ++i)
-            {
-                AddStraightData((int)MathUtils.NextRand(25, 35));
-            }
-
             // Teach Circle Gestures
             mTrainer.CurrentOutputName = "Circle";
             const int NUM_CIRCLE_GESTURES = 30;
             for (int i = 0; i < NUM_CIRCLE_GESTURES; ++i)
             {
                 AddCircleData((float)MathUtils.NextRand(.95, 1.05), (int)MathUtils.NextRand(25, 35));
+            }
+
+            // Teach Punch Gestures
+            mTrainer.CurrentOutputName = "Punch";
+            const int NUM_PUNCH_GESTURES = 30;
+            for (int i = 0; i < NUM_PUNCH_GESTURES; ++i)
+            {
+                AddStraightData((int)MathUtils.NextRand(25, 35));
             }
 
             // Teach Swipe Gestures
@@ -129,15 +126,24 @@ namespace LoboLabs.GestureNeuralNet.Test
             {
                 AddSwipeData((int)MathUtils.NextRand(25, 35));
             }
+
+            // Save the Training Data to a file
+            //GestureIOManager.SaveGesturesToPath("TestGestures", mTrainer.DefinitionsList);
+
+            // Load the Training Data from a file
+            //List<ScapeDataDefinition> definitionList = GestureIOManager.GetGesturesFromPath("TestGestures");
+            //List<string> definitionNameList = ScapeDataDefinition.GetNamesFromList(definitionList);
             
             // Generate a Gesture NeuralNet with three hidden nodes
             mGenerator.NumHidden = 3;
-            NeuralNetwork networkMultiple = mGenerator.Generate(NUM_INPUT_VECTORS * NUM_VALUES_PER_VECTOR, NUM_OUTPUTS);
-            networkMultiple.ResultReceived += ProcessResult;
+            NeuralNetwork networkMultiple = mGenerator.Generate(
+                NUM_INPUT_VECTORS * NUM_VALUES_PER_VECTOR,
+                ScapeDataDefinition.GetNamesFromList(mTrainer.DefinitionsList));
+            networkMultiple.ValidResultReceived += ProcessResult;
 
             // Train networks
             mTrainer.LearningRate = .2;
-            mTrainer.TrainBackPropagation(networkMultiple);
+            mTrainer.TrainBackPropagation(networkMultiple, mTrainer.DefinitionsList);
 
             // Remove Trainer as listener and add Single hidden node NeuralNet as listener
             mScape.DataReceived -= mTrainer.ProcessData;
@@ -174,16 +180,9 @@ namespace LoboLabs.GestureNeuralNet.Test
             }
         }
 
-        public void ProcessResult(object sender, ScapeData input, List<double> output)
+        public void ProcessResult(object sender, ScapeData input, string outputName, List<double> output)
         {
-            for (int datum = 0; datum < output.Count; ++datum)
-            {
-                if(output[datum] > .75)
-                {
-                    mDetectedGestureQueue.Enqueue(OUTPUT_NAMES[datum]);
-                    break;
-                }
-            }
+            mDetectedGestureQueue.Enqueue(outputName);
         }
 
         public bool GetLastGestureDetected(out string lastGestureName)

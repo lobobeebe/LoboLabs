@@ -13,9 +13,9 @@ namespace LoboLabs.GestureNeuralNet
     {
         private static string GESTURE_EXTENSION = ".gd";
 
-        public static List<GestureDefinition> GetGesturesFromPath(string directory)
+        public static List<ScapeDataDefinition> GetGesturesFromPath(string directory)
         {
-            List<GestureDefinition> definitionList = new List<GestureDefinition>();
+            List<ScapeDataDefinition> definitionList = new List<ScapeDataDefinition>();
 
             if (Directory.Exists(directory))
             {
@@ -23,7 +23,8 @@ namespace LoboLabs.GestureNeuralNet
 
                 foreach (string file in filesInDirectory)
                 {
-                    GestureDefinition definition = GestureDefinition.LoadFromFile(file);
+                    ScapeDataDefinition definition = new ScapeDataDefinition("", 0);
+                    definition.LoadFromFile(file);
 
                     if (definition != null)
                     {
@@ -31,18 +32,20 @@ namespace LoboLabs.GestureNeuralNet
                     }
                 }
             }
-
+            
             return definitionList;
         }
 
-        public static List<GestureDefinition> SaveGesturesToPath(string directory, List<GestureDefinition> definitionList)
+        public static List<ScapeDataDefinition> SaveGesturesToPath(string directory, List<ScapeDataDefinition> definitionList)
         {
-            if (Directory.Exists(directory))
+            if (!Directory.Exists(directory))
             {
-                foreach (GestureDefinition definition in definitionList)
-                {
-                    definition.SaveToFile(directory + definition.Name + GESTURE_EXTENSION);
-                }
+                Directory.CreateDirectory(directory);
+            }
+
+            foreach (ScapeDataDefinition definition in definitionList)
+            {
+                definition.SaveToFile(directory + "\\" + definition.Name + GESTURE_EXTENSION);
             }
 
             return definitionList;

@@ -97,6 +97,12 @@ namespace LoboLabs.NeuralNet
             get;
             set;
         }
+
+        public string Name
+        {
+            get;
+            set;
+        }
         
         public void RegisterInput(Node item, double inputWeight)
         {

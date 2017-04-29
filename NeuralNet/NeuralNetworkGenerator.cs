@@ -24,7 +24,7 @@ namespace LoboLabs.NeuralNet
             NumHidden = DEFAULT_NUM_NEURONS;
         }
 
-        public NeuralNetwork Generate(int numInputs, int numOutputs)
+        public NeuralNetwork Generate(int numInputs, List<string> outputNames)
         {
             NeuralNetwork network = new NeuralNetwork();
 
@@ -41,10 +41,11 @@ namespace LoboLabs.NeuralNet
 
             // Add Actuator Layer and Actuator
             neurons.Add(new List<ComputationalNode>());
-            for (int actuatorIndex = 0; actuatorIndex < numOutputs; ++actuatorIndex)
+            for (int actuatorIndex = 0; actuatorIndex < outputNames.Count; ++actuatorIndex)
             {
                 neurons[1].Add(new ComputationalNode(new LogisticFunction()));
                 neurons[1][actuatorIndex].Bias = GetNextWeight();
+                neurons[1][actuatorIndex].Name = outputNames[actuatorIndex];
             }
 
             // Add a number of hidden neurons
@@ -62,7 +63,7 @@ namespace LoboLabs.NeuralNet
 
                 // Add each node to the actuator's inputs
                 // TODO: This only works with two layers and 1 actuator
-                for (int actuatorIndex = 0; actuatorIndex < numOutputs; ++actuatorIndex)
+                for (int actuatorIndex = 0; actuatorIndex < outputNames.Count; ++actuatorIndex)
                 {
                     neurons[1][actuatorIndex].RegisterInput(neurons[0][neuron], GetNextWeight());
                 }

@@ -12,7 +12,6 @@ namespace LoboLabs.NeuralNet
         private const int DEFAULT_MAX_EPOCHS = 100;
         private const double DEFAULT_LEARNING_RATE = 1;
 
-        private List<ScapeDataDefinition> mDefinitions;
         private int mNumInputs;
 
         public NeuralNetworkTrainer(Functions.ErrorFunction errorFunction, int numInputs)
@@ -20,7 +19,7 @@ namespace LoboLabs.NeuralNet
             ErrorFunction = errorFunction;
             mNumInputs = numInputs;
 
-            mDefinitions = new List<ScapeDataDefinition>();
+            DefinitionsList = new List<ScapeDataDefinition>();
             MaxEpochs = DEFAULT_MAX_EPOCHS;
             LearningRate = DEFAULT_LEARNING_RATE;
         }
@@ -74,6 +73,12 @@ namespace LoboLabs.NeuralNet
             set;
         }
         
+        public List<ScapeDataDefinition> DefinitionsList
+        {
+            get;
+            private set;
+        }
+
         /// <summary>
         /// TODO
         /// </summary>
@@ -86,7 +91,7 @@ namespace LoboLabs.NeuralNet
         private ScapeDataDefinition GetDataDefinitionByName(string name)
         {
             ScapeDataDefinition returnDefinition = null;
-            foreach (ScapeDataDefinition definition in mDefinitions)
+            foreach (ScapeDataDefinition definition in DefinitionsList)
             {
                 if (definition.Name == name)
                 {
@@ -98,7 +103,7 @@ namespace LoboLabs.NeuralNet
             if (returnDefinition == null)
             {
                 returnDefinition = new ScapeDataDefinition(name, mNumInputs);
-                mDefinitions.Add(returnDefinition);
+                DefinitionsList.Add(returnDefinition);
             }
 
             return returnDefinition;
@@ -126,8 +131,13 @@ namespace LoboLabs.NeuralNet
 
         public void TrainBackPropagation(NeuralNetwork network)
         {
+            TrainBackPropagation(network, DefinitionsList);
+        }
+
+        public void TrainBackPropagation(NeuralNetwork network, List<ScapeDataDefinition> definitionsList)
+        {
             // Create the training data from ScapeDataDefintions
-            List<TrainingData> trainingData = CreateTrainingDataFromDefinitions(mDefinitions);
+            List<TrainingData> trainingData = CreateTrainingDataFromDefinitions(definitionsList);
 
             // Interval to print error
             int errInterval = MaxEpochs / 10;

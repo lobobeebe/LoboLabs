@@ -10,9 +10,9 @@ namespace LoboLabs.NeuralNet
     {
         private static ClassLogger Logger = new ClassLogger(typeof(NeuralNetwork));
 
-        public delegate void NeuralNetworkResultHandler(object sender, ScapeData input, List<double> output);
-        public event NeuralNetworkResultHandler ResultReceived;
-
+        public delegate void NeuralNetworkResultHandler(object sender, ScapeData input, string outputName, List<double> output);
+        public event NeuralNetworkResultHandler ValidResultReceived;
+        
         /// <summary>
         /// Constructor
         /// </summary>
@@ -20,6 +20,9 @@ namespace LoboLabs.NeuralNet
         {
             Sensors = new List<Node>();
             Neurons = new List<List<ComputationalNode>>();
+
+            // Default to .75 as a threshold
+            Threshold = .75f;
         }
 
         public List<ComputationalNode> GetActuators()
@@ -96,8 +99,17 @@ namespace LoboLabs.NeuralNet
 
         public void ProcessData(object sender, ScapeData scapeData)
         {
-            List<double> data = scapeData.AsList(); 
-            ResultReceived(this, scapeData, Compute(data));
+            List<double> input = scapeData.AsList();
+            List<double> output = Compute(input);
+
+            for (int outputIndex = 0; outputIndex < output.Count; ++outputIndex)
+            {
+                if (output[outputIndex] > Threshold)
+                {
+                    // Send result received for the first output over the threshold.
+                    ValidResultReceived(this, scapeData, GetActuators()[outputIndex].Name, output);
+                }
+            }
         }
         
         /// <summary>
@@ -109,9 +121,10 @@ namespace LoboLabs.NeuralNet
             set;
         }
 
-        public void WriteToFile(string fileName)
+        public double Threshold
         {
-            // TODO
+            get;
+            private set;
         }
     }
 

@@ -123,7 +123,7 @@ namespace LoboLabs.GestureNeuralNet
             Positions.Clear();
 
             // Read the length of the Positions vector
-            int numPositions = reader.Read();
+            int numPositions = reader.ReadInt32();
 
             // Read each x, y, z of the positions
             for (int i = 0; i < numPositions; ++i)
