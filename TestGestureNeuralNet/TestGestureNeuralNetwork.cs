@@ -31,11 +31,11 @@ namespace LoboLabs.GestureNeuralNet.Test
             mGenerator = new NeuralNetworkGenerator();
 
             mDetectedGestureQueue = new Queue<string>();
-            
+
             // Add the trainer as a listener to the scape
             mScape.DataReceived += mTrainer.ProcessData;
         }
-        
+
         public void AddStraightData(int numPoints)
         {
             mScape.StartGesturing();
@@ -93,13 +93,13 @@ namespace LoboLabs.GestureNeuralNet.Test
             for (int i = 0; i < numPoints - 1; ++i)
             {
                 float randomAngle = (float)MathUtils.NextRand(0, 2 * System.Math.PI);
-                mScape.UpdateGesturePosition(new Vector((float)System.Math.Cos(randomAngle) * radius, 
+                mScape.UpdateGesturePosition(new Vector((float)System.Math.Cos(randomAngle) * radius,
                     (float)System.Math.Sin(randomAngle) * radius, (float)System.Math.Sin(randomAngle) * radius));
             }
 
             mScape.StopGesturing();
         }
-        
+
         [Test]
         public void SingleGesture()
         {
@@ -133,7 +133,7 @@ namespace LoboLabs.GestureNeuralNet.Test
             // Load the Training Data from a file
             //List<ScapeDataDefinition> definitionList = GestureIOManager.GetGesturesFromPath("TestGestures");
             //List<string> definitionNameList = ScapeDataDefinition.GetNamesFromList(definitionList);
-            
+
             // Generate a Gesture NeuralNet with three hidden nodes
             mGenerator.NumHidden = 3;
             NeuralNetwork networkMultiple = mGenerator.Generate(
@@ -187,7 +187,7 @@ namespace LoboLabs.GestureNeuralNet.Test
 
         public bool GetLastGestureDetected(out string lastGestureName)
         {
-            if(mDetectedGestureQueue.Count > 0)
+            if (mDetectedGestureQueue.Count > 0)
             {
                 lastGestureName = mDetectedGestureQueue.Dequeue();
                 return true;
@@ -197,5 +197,4 @@ namespace LoboLabs.GestureNeuralNet.Test
             return false;
         }
     }
-
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 
-namespace LoboLabs.Utilities
+namespace LoboLabs.NeuralNet
 { 
 
     /// <summary>
@@ -9,7 +10,10 @@ namespace LoboLabs.Utilities
     /// </summary>
     public interface ScapeData
     {
-        List<double> ToList();
+        List<double> AsList();
+
+        void LoadFromStream(BinaryReader reader);
+        void WriteToStream(BinaryWriter writer);
     }
 
 }
