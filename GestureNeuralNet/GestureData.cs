@@ -55,20 +55,11 @@ namespace LoboLabs.GestureNeuralNet
         }
 
         /// <summary>
-        /// The name of the Gesture
-        /// </summary>
-        private string Name
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// Returns the Gesture Data as a list of doubles representing an estimated version of the gesture.
         /// This function estimates the gestures using Pushback Estimation
         /// </summary>
         /// <returns></returns>
-        public override List<double> AsList()
+        public List<double> AsList()
         {
             List<double> convertedData = new List<double>();
 
@@ -108,11 +99,8 @@ namespace LoboLabs.GestureNeuralNet
         /// Saves the Gesture Data to a file.
         /// </summary>
         /// <returns></returns>
-        public override void WriteToStream(BinaryWriter writer)
+        public void WriteToStream(BinaryWriter writer)
         {
-            // Write the name of the Gesture
-            writer.Write(Name);
-
             // Write the length of the Positions vector
             writer.Write(Positions.Count);
 
@@ -129,16 +117,13 @@ namespace LoboLabs.GestureNeuralNet
         /// Loads the Gesture Data from a file.
         /// </summary>
         /// <returns></returns>
-        public override void LoadFromStream(BinaryReader reader)
+        public void LoadFromStream(BinaryReader reader)
         {
             // Clear the current gesture
             Positions.Clear();
-            
-            // Read the name of the Gesture
-            Name = reader.ReadString();
 
             // Read the length of the Positions vector
-            int numPositions = reader.Read();
+            int numPositions = reader.ReadInt32();
 
             // Read each x, y, z of the positions
             for (int i = 0; i < numPositions; ++i)
