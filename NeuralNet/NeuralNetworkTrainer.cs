@@ -16,8 +16,7 @@ namespace LoboLabs.NeuralNet
         {
             ErrorFunction = errorFunction;
             mNumInputs = numInputs;
-
-            DefinitionsList = new List<DataClass>();
+            
             MaxEpochs = DEFAULT_MAX_EPOCHS;
             LearningRate = DEFAULT_LEARNING_RATE;
         }
@@ -65,18 +64,6 @@ namespace LoboLabs.NeuralNet
             return trainingDataList;
         }
 
-        public string CurrentOutputName
-        {
-            get;
-            set;
-        }
-        
-        public List<DataClass> DefinitionsList
-        {
-            get;
-            private set;
-        }
-
         /// <summary>
         /// TODO
         /// </summary>
@@ -84,27 +71,6 @@ namespace LoboLabs.NeuralNet
         {
             get;
             set;
-        }
-
-        private DataClass GetDataDefinitionByName(string name)
-        {
-            DataClass returnDefinition = null;
-            foreach (DataClass definition in DefinitionsList)
-            {
-                if (definition.Name == name)
-                {
-                    returnDefinition = definition;
-                }
-            }
-
-            // If not found, create a new one and add it to the Definitions list
-            if (returnDefinition == null)
-            {
-                returnDefinition = new DataClass(name, mNumInputs);
-                DefinitionsList.Add(returnDefinition);
-            }
-
-            return returnDefinition;
         }
 
         public double LearningRate
@@ -117,19 +83,6 @@ namespace LoboLabs.NeuralNet
         {
             get;
             set;
-        }
-
-        public void ProcessData(object sender, ScapeData scapeData)
-        {
-            // Find or create the current Data Definition
-            DataClass currentDefinition = GetDataDefinitionByName(CurrentOutputName);
-
-            currentDefinition.AddScapeData(scapeData);
-        }
-
-        public void TrainBackPropagation(NeuralNetwork network)
-        {
-            TrainBackPropagation(network, DefinitionsList);
         }
 
         public void TrainBackPropagation(NeuralNetwork network, List<DataClass> definitionsList)
