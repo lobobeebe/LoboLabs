@@ -121,14 +121,11 @@ namespace LoboLabs.GestureNeuralNet.Test
             }
 
             // Save the Training Data to a file
-            //string gestureDirectory = "data/TestGestures";
-            //GestureManager.SaveGesturesToPath(gestureDirectory, mGestureManager.DefinitionsList);
+            string gestureDirectory = "data/TestGestures";
+            mGestureManager.SaveGesturesToPath(gestureDirectory);
 
             // Load the Training Data from a file
-            //List<DataClass> definitionList = GestureManager.LoadGesturesFromPath(gestureDirectory);
-            //mGestureNames = DataClass.GetNamesFromList(definitionList);
-
-            mGestureManager.CompleteTraining();
+            mGestureManager.LoadAndTrainNetwork(gestureDirectory);
 
             // Pass several Punch gestures to test the single hidden node network. It should recognize each one
             for (int i = 0; i < NUM_PUNCH_GESTURES; ++i)

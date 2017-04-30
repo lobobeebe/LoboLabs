@@ -36,7 +36,14 @@ namespace LoboLabs.GestureNeuralNet
             mClassList = new List<DataClass>();
 
             IsTraining = true;
-            Threshold = 0.75;
+            Threshold = 0.9;
+        }
+
+        public void ClearGestures()
+        {
+            mClassList = new List<DataClass>();
+            mGestureNames = new List<string>();
+            CurrentGestureName = "";
         }
 
         public void CompleteTraining()
@@ -91,20 +98,23 @@ namespace LoboLabs.GestureNeuralNet
             set;
         }
 
-        public void Load(string gestureDirectory)
+        public void LoadAndTrainNetwork(string gestureDirectory)
         {
             // Load the Training Data from a file
-            mClassList = LoadGesturesFromPath(gestureDirectory);
+            LoadGesturesFromPath(gestureDirectory);
 
             CompleteTraining();
         }
 
-        public static List<DataClass> LoadGesturesFromPath(string directory)
+        public List<string> LoadGesturesFromPath(string directory)
         {
+            List<string> nameList = new List<string>();
             List<DataClass> definitionList = new List<DataClass>();
 
             if (Directory.Exists(directory))
             {
+                ClearGestures();
+
                 string[] filesInDirectory = Directory.GetFiles(directory, "*" + GESTURE_EXTENSION);
 
                 foreach (string file in filesInDirectory)
@@ -115,11 +125,14 @@ namespace LoboLabs.GestureNeuralNet
                     if (definition != null)
                     {
                         definitionList.Add(definition);
+                        nameList.Add(definition.Name);
                     }
                 }
             }
-            
-            return definitionList;
+
+            mClassList = definitionList;
+
+            return nameList;
         }
 
         public void OnResultComputed(object sender, ScapeData input, List<double> output)
@@ -155,19 +168,17 @@ namespace LoboLabs.GestureNeuralNet
             }
         }
 
-        public static List<DataClass> SaveGesturesToPath(string directory, List<DataClass> definitionList)
+        public void SaveGesturesToPath(string directory)
         {
             if (!Directory.Exists(directory))
             {
                 Directory.CreateDirectory(directory);
             }
 
-            foreach (DataClass definition in definitionList)
+            foreach (DataClass definition in mClassList)
             {
                 definition.SaveToFile(directory + "\\" + definition.Name + GESTURE_EXTENSION);
             }
-
-            return definitionList;
         }
 
         public void StartGesturing()
