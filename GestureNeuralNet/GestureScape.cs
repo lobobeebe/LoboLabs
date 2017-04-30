@@ -19,7 +19,7 @@ namespace LoboLabs.GestureNeuralNet
         /// </summary>
         /// <param name="numPositions">The number of positions down to which gestures will be estimated.</param>
         /// <throws type="NotSupportedException">If the number of given positions is less than 2.</throws>
-        public GestureScape(int numPositions)
+        public GestureScape(uint numPositions)
         {
             // Throw for too few estimated positions
             if (numPositions < 2)
@@ -55,7 +55,7 @@ namespace LoboLabs.GestureNeuralNet
         /// <summary>
         /// The number of positions down to which gestures will be estimated.
         /// </summary>
-        private int NumPositions
+        private uint NumPositions
         {
             get;
             set;

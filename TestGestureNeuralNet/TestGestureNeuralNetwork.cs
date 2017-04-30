@@ -128,22 +128,23 @@ namespace LoboLabs.GestureNeuralNet.Test
             }
 
             // Save the Training Data to a file
-            //GestureIOManager.SaveGesturesToPath("TestGestures", mTrainer.DefinitionsList);
+            string gestureDirectory = "data/TestGestures";
+            GestureManager.SaveGesturesToPath(gestureDirectory, mTrainer.DefinitionsList);
 
             // Load the Training Data from a file
-            //List<ScapeDataDefinition> definitionList = GestureIOManager.GetGesturesFromPath("TestGestures");
-            //List<string> definitionNameList = ScapeDataDefinition.GetNamesFromList(definitionList);
+            List<DataClass> definitionList = GestureManager.GetGesturesFromPath(gestureDirectory);
+            List<string> definitionNameList = DataClass.GetNamesFromList(definitionList);
 
             // Generate a Gesture NeuralNet with three hidden nodes
             mGenerator.NumHidden = 3;
             NeuralNetwork networkMultiple = mGenerator.Generate(
                 NUM_INPUT_VECTORS * NUM_VALUES_PER_VECTOR,
-                ScapeDataDefinition.GetNamesFromList(mTrainer.DefinitionsList));
+                DataClass.GetNamesFromList(definitionList));
             networkMultiple.ValidResultReceived += ProcessResult;
 
             // Train networks
             mTrainer.LearningRate = .2;
-            mTrainer.TrainBackPropagation(networkMultiple, mTrainer.DefinitionsList);
+            mTrainer.TrainBackPropagation(networkMultiple, definitionList);
 
             // Remove Trainer as listener and add Single hidden node NeuralNet as listener
             mScape.DataReceived -= mTrainer.ProcessData;

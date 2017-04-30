@@ -15,14 +15,8 @@ namespace LoboLabs.GestureNeuralNet
         /// Constructor
         /// </summary>
         /// <param name="numPositions">The number of positions down to which all gestures will be estimated</param>
-        public GestureData(int numPositions)
+        public GestureData(uint numPositions)
         {
-            // Throw for too few estimated positions
-            if (numPositions < 2)
-            {
-                throw new NotSupportedException("The number of estimated positions must not be less than 2.");
-            }
-
             NumPositionsInGesture = numPositions;
             Positions = new List<Vector>();
         }
@@ -39,7 +33,7 @@ namespace LoboLabs.GestureNeuralNet
         /// <summary>
         /// The number of positions down to which all gestures will be estimated.
         /// </summary>
-        public int NumPositionsInGesture
+        public uint NumPositionsInGesture
         {
             get;
             private set;
@@ -101,6 +95,9 @@ namespace LoboLabs.GestureNeuralNet
         /// <returns></returns>
         public void WriteToStream(BinaryWriter writer)
         {
+            // Write the number of positions
+            writer.Write(NumPositionsInGesture);
+
             // Write the length of the Positions vector
             writer.Write(Positions.Count);
 
@@ -121,6 +118,9 @@ namespace LoboLabs.GestureNeuralNet
         {
             // Clear the current gesture
             Positions.Clear();
+
+            // Read the number of positions
+            NumPositionsInGesture = reader.ReadUInt32();
 
             // Read the length of the Positions vector
             int numPositions = reader.ReadInt32();

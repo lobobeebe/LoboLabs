@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using LoboLabs.NeuralNet;
-using LoboLabs.Utilities;
 using System.IO;
 
 namespace LoboLabs.GestureNeuralNet
@@ -9,13 +7,13 @@ namespace LoboLabs.GestureNeuralNet
     /// <summary>
     /// Allows the User to save and load Gesture Definitions from disk
     /// </summary>
-    public class GestureIOManager
+    public class GestureManager
     {
         private static string GESTURE_EXTENSION = ".gd";
 
-        public static List<ScapeDataDefinition> GetGesturesFromPath(string directory)
+        public static List<DataClass> GetGesturesFromPath(string directory)
         {
-            List<ScapeDataDefinition> definitionList = new List<ScapeDataDefinition>();
+            List<DataClass> definitionList = new List<DataClass>();
 
             if (Directory.Exists(directory))
             {
@@ -23,7 +21,7 @@ namespace LoboLabs.GestureNeuralNet
 
                 foreach (string file in filesInDirectory)
                 {
-                    ScapeDataDefinition definition = new ScapeDataDefinition("", 0);
+                    GestureClass definition = new GestureClass();
                     definition.LoadFromFile(file);
 
                     if (definition != null)
@@ -36,14 +34,14 @@ namespace LoboLabs.GestureNeuralNet
             return definitionList;
         }
 
-        public static List<ScapeDataDefinition> SaveGesturesToPath(string directory, List<ScapeDataDefinition> definitionList)
+        public static List<DataClass> SaveGesturesToPath(string directory, List<DataClass> definitionList)
         {
             if (!Directory.Exists(directory))
             {
                 Directory.CreateDirectory(directory);
             }
 
-            foreach (ScapeDataDefinition definition in definitionList)
+            foreach (DataClass definition in definitionList)
             {
                 definition.SaveToFile(directory + "\\" + definition.Name + GESTURE_EXTENSION);
             }

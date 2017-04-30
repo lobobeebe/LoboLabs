@@ -40,8 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GestureData.cs" />
-    <Compile Include="GestureDefinition.cs" />
-    <Compile Include="GestureIOManager.cs" />
+    <Compile Include="GestureClass.cs" />
+    <Compile Include="GestureManager.cs" />
     <Compile Include="GestureScape.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

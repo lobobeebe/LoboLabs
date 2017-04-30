@@ -3,7 +3,6 @@ using LoboLabs.Utilities;
 
 namespace LoboLabs.NeuralNet
 {
-
     public class NeuralNetworkTrainer
     {
         private static ClassLogger Logger = new ClassLogger(typeof(NeuralNetworkTrainer));
@@ -11,14 +10,14 @@ namespace LoboLabs.NeuralNet
         private const int DEFAULT_MAX_EPOCHS = 100;
         private const double DEFAULT_LEARNING_RATE = 1;
 
-        private int mNumInputs;
+        private uint mNumInputs;
 
-        public NeuralNetworkTrainer(Functions.ErrorFunction errorFunction, int numInputs)
+        public NeuralNetworkTrainer(Functions.ErrorFunction errorFunction, uint numInputs)
         {
             ErrorFunction = errorFunction;
             mNumInputs = numInputs;
 
-            DefinitionsList = new List<ScapeDataDefinition>();
+            DefinitionsList = new List<DataClass>();
             MaxEpochs = DEFAULT_MAX_EPOCHS;
             LearningRate = DEFAULT_LEARNING_RATE;
         }
@@ -46,7 +45,7 @@ namespace LoboLabs.NeuralNet
             return sumError;
         }
 
-        public List<TrainingData> CreateTrainingDataFromDefinitions(List<ScapeDataDefinition> definitions)
+        public List<TrainingData> CreateTrainingDataFromDefinitions(List<DataClass> definitions)
         {
             List<TrainingData> trainingDataList = new List<TrainingData>();
             
@@ -72,7 +71,7 @@ namespace LoboLabs.NeuralNet
             set;
         }
         
-        public List<ScapeDataDefinition> DefinitionsList
+        public List<DataClass> DefinitionsList
         {
             get;
             private set;
@@ -87,10 +86,10 @@ namespace LoboLabs.NeuralNet
             set;
         }
 
-        private ScapeDataDefinition GetDataDefinitionByName(string name)
+        private DataClass GetDataDefinitionByName(string name)
         {
-            ScapeDataDefinition returnDefinition = null;
-            foreach (ScapeDataDefinition definition in DefinitionsList)
+            DataClass returnDefinition = null;
+            foreach (DataClass definition in DefinitionsList)
             {
                 if (definition.Name == name)
                 {
@@ -101,7 +100,7 @@ namespace LoboLabs.NeuralNet
             // If not found, create a new one and add it to the Definitions list
             if (returnDefinition == null)
             {
-                returnDefinition = new ScapeDataDefinition(name, mNumInputs);
+                returnDefinition = new DataClass(name, mNumInputs);
                 DefinitionsList.Add(returnDefinition);
             }
 
@@ -123,7 +122,7 @@ namespace LoboLabs.NeuralNet
         public void ProcessData(object sender, ScapeData scapeData)
         {
             // Find or create the current Data Definition
-            ScapeDataDefinition currentDefinition = GetDataDefinitionByName(CurrentOutputName);
+            DataClass currentDefinition = GetDataDefinitionByName(CurrentOutputName);
 
             currentDefinition.AddScapeData(scapeData);
         }
@@ -133,7 +132,7 @@ namespace LoboLabs.NeuralNet
             TrainBackPropagation(network, DefinitionsList);
         }
 
-        public void TrainBackPropagation(NeuralNetwork network, List<ScapeDataDefinition> definitionsList)
+        public void TrainBackPropagation(NeuralNetwork network, List<DataClass> definitionsList)
         {
             // Create the training data from ScapeDataDefintions
             List<TrainingData> trainingData = CreateTrainingDataFromDefinitions(definitionsList);

@@ -79,7 +79,9 @@ namespace LoboLabs.NeuralNet.TestNeuralNetwork
             inputs.Add(1);
             inputs.Add(1);
             inputs.Add(1);
-            Assert.AreEqual(0.761594, mNeuralNet.Compute(inputs), .000001);
+            List<double> expectedOutputs = new List<double>(new double[] { 0, 0, 0.761594 });
+            //Assert.AreEqual 
+            //Assert.AreEqual(, mNeuralNet.Compute(inputs), .000001);
 
             // result = tanh[(.1 * .6) + (.3 * .3) + (.6 * .1)] = tanh(.21) = 0.206966
             inputs.Clear();

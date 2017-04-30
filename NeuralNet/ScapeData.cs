@@ -3,7 +3,6 @@ using System.IO;
 
 namespace LoboLabs.NeuralNet
 { 
-
     /// <summary>
     /// TODO: Documentation
     /// TODO: Unit Tests
@@ -15,5 +14,4 @@ namespace LoboLabs.NeuralNet
         void LoadFromStream(BinaryReader reader);
         void WriteToStream(BinaryWriter writer);
     }
-
 }

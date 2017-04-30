@@ -26,9 +26,6 @@
             Assert.DoesNotThrow(() => scape = new GestureScape(5));
             Assert.DoesNotThrow(() => scape = new GestureScape(50));
             Assert.DoesNotThrow(() => scape = new GestureScape(2));
-
-            Assert.Throws<NotSupportedException>(() => scape = new GestureScape(1));
-            Assert.Throws<NotSupportedException>(() => scape = new GestureScape(-10));
         }
 
         [Test]

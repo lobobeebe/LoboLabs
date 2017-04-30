@@ -2,11 +2,8 @@ using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 
-using LoboLabs.Utilities;
-
 namespace LoboLabs.NeuralNet.Test
 {
-
     [TestFixture]
     public class TestCompuatationalNode
     {

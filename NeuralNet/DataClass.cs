@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace LoboLabs.NeuralNet
 {
-    public class ScapeDataDefinition
+    public class DataClass
     {
-        public ScapeDataDefinition(string name, int numInputs)
+        public DataClass(string name = "", uint numInputs = 0)
         {
             Name = name;
             NumInputs = numInputs;
@@ -27,11 +24,11 @@ namespace LoboLabs.NeuralNet
             private set;
         }
 
-        public static List<string> GetNamesFromList(List<ScapeDataDefinition> definitionList)
+        public static List<string> GetNamesFromList(List<DataClass> definitionList)
         {
             List<string> nameList = new List<string>();
 
-            foreach(ScapeDataDefinition definition in definitionList)
+            foreach(DataClass definition in definitionList)
             {
                 nameList.Add(definition.Name);
             }
@@ -45,7 +42,7 @@ namespace LoboLabs.NeuralNet
             protected set;
         }
 
-        public int NumInputs
+        public uint NumInputs
         {
             get;
             protected set;
@@ -92,7 +89,7 @@ namespace LoboLabs.NeuralNet
                     Name = reader.ReadString();
 
                     // Read the number of positions per gesture
-                    NumInputs = reader.ReadInt32();
+                    NumInputs = reader.ReadUInt32();
                     
                     // Read the length of the Positions vector
                     int numGestureData = reader.ReadInt32();

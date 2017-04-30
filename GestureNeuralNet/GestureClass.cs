@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using LoboLabs.NeuralNet;
 
 namespace LoboLabs.GestureNeuralNet
 {
-    public class GestureDefinition : ScapeDataDefinition
+    public class GestureClass : DataClass
     {
-        public GestureDefinition(string name, int numInputs) : base(name, numInputs)
+        public GestureClass(string name = "", uint numInputs = 0) : base(name, numInputs)
         {
         }
         

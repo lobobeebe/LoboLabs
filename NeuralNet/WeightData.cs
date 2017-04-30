@@ -1,6 +1,5 @@
-﻿namespace LoboLabs.NeuralNet
+﻿namespace LoboLabs.Utilities
 {
-
     public class WeightData
     {        
         public double Weight
@@ -15,5 +14,4 @@
             set;
         }
     }
-
 }

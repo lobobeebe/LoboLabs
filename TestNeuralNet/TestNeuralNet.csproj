@@ -45,10 +45,12 @@
     <Compile Include="Mock\ComputationalNode.cs" />
     <Compile Include="Mock\NeuralNetwork.cs" />
     <Compile Include="Mock\Scape.cs" />
+    <Compile Include="Mock\ScapeData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestComputationalNode.cs" />
     <Compile Include="TestNeuralNetwork.cs" />
     <Compile Include="TestNeuralNetworkTrainer.cs" />
+    <Compile Include="TestScape.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -1,38 +1,48 @@
 ﻿using System;
 
-namespace LoboLabs
-{ 
-namespace Utilities
+namespace LoboLabs.Utilities
 {
-
-public class LogWriter
-{
-    public static void Write(string message)
+    /// <summary>
+    /// Class used to log messages
+    /// </summary>
+    public class LogWriter
     {
-        if(SingletonLogWriter == null)
+        private static LogWriter mSingletonLogWriter;
+
+        /// <summary>
+        /// Static function used to write messages
+        /// </summary>
+        /// <param name="message"></param>
+        public static void Write(string message)
         {
-            SingletonLogWriter = new LogWriter();
+            SingletonLogWriter._Write(message);
         }
 
-        SingletonLogWriter.WriteMessage(message);
-    }
+        protected virtual void _Write(string message)
+        {
+            Console.WriteLine(message);
+        }
 
-    protected virtual void WriteMessage(string message)
-    {
-        Console.WriteLine(message);
-    }
+        public static void SetLogWriter(LogWriter logWriter)
+        {
+            SingletonLogWriter = logWriter;
+        }
 
-    public static void SetLogWriter(LogWriter logWriter)
-    {
-        SingletonLogWriter = logWriter;
-    }
+        private static LogWriter SingletonLogWriter
+        {
+            get
+            {
+                if (mSingletonLogWriter == null)
+                {
+                    mSingletonLogWriter = new LogWriter();
+                }
 
-    private static LogWriter SingletonLogWriter
-    {
-        get;
-        set;
+                return mSingletonLogWriter;
+            }
+            set
+            {
+                mSingletonLogWriter = value;
+            }
+        }
     }
-}
-
-}
 }
