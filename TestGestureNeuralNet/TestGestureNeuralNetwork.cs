@@ -101,7 +101,7 @@ namespace LoboLabs.GestureNeuralNet.Test
             const int NUM_PUNCH_GESTURES = 30;
             for (int i = 0; i < NUM_PUNCH_GESTURES; ++i)
             {
-                AddStraightData((int)MathUtils.NextRand(25, 35));
+                AddStraightData((int)MathUtils.NextRand(35, 45));
             }
 
             // Teach Circle Gestures
@@ -109,7 +109,7 @@ namespace LoboLabs.GestureNeuralNet.Test
             const int NUM_CIRCLE_GESTURES = 30;
             for (int i = 0; i < NUM_CIRCLE_GESTURES; ++i)
             {
-                AddCircleData((float)MathUtils.NextRand(.95, 1.05), (int)MathUtils.NextRand(25, 35));
+                AddCircleData((float)MathUtils.NextRand(.95, 1.05), (int)MathUtils.NextRand(35, 45));
             }
 
             // Teach Swipe Gestures
@@ -117,7 +117,7 @@ namespace LoboLabs.GestureNeuralNet.Test
             const int NUM_SWIPE_GESTURES = 30;
             for (int i = 0; i < NUM_SWIPE_GESTURES; ++i)
             {
-                AddSwipeData((int)MathUtils.NextRand(25, 35));
+                AddSwipeData((int)MathUtils.NextRand(35, 45));
             }
 
             // Save the Training Data to a file
@@ -130,7 +130,7 @@ namespace LoboLabs.GestureNeuralNet.Test
             // Pass several Punch gestures to test the single hidden node network. It should recognize each one
             for (int i = 0; i < NUM_PUNCH_GESTURES; ++i)
             {
-                AddStraightData(30);
+                AddStraightData(40);
 
                 string lastGestureDetected;
                 Assert.True(GetLastGestureDetected(out lastGestureDetected));
@@ -140,7 +140,7 @@ namespace LoboLabs.GestureNeuralNet.Test
             // Pass several Circle gestures to test the single hidden node network. It should recognize each one
             for (int i = 0; i < NUM_CIRCLE_GESTURES; ++i)
             {
-                AddCircleData(1, 30);
+                AddCircleData(1, 40);
 
                 string lastGestureDetected;
                 Assert.True(GetLastGestureDetected(out lastGestureDetected));
@@ -150,7 +150,7 @@ namespace LoboLabs.GestureNeuralNet.Test
             // Pass several Swipe gestures to test the single hidden node network. It should recognize each one
             for (int i = 0; i < NUM_SWIPE_GESTURES; ++i)
             {
-                AddSwipeData(30);
+                AddSwipeData(40);
 
                 string lastGestureDetected;
                 Assert.True(GetLastGestureDetected(out lastGestureDetected));

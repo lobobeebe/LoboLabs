@@ -15,11 +15,10 @@ namespace LoboLabs.GestureNeuralNet
         public delegate void GestureDetectionHandler(object sender, string gestureName);
         public event GestureDetectionHandler OnGestureDetected;
 
+        private const uint DEFAULT_NUM_REQUIRED_VECTORS = 30;
         private const string GESTURE_EXTENSION = ".gc";
-        private const int NUM_DIRECTIONAL_VECTORS = 10;
 
         private GestureScape mScape;
-        private NeuralNetworkTrainer mTrainer;
         private NeuralNetwork mNetwork;
         
         private List<DataClass> mClassList;
@@ -27,10 +26,9 @@ namespace LoboLabs.GestureNeuralNet
 
         public GestureManager()
         {
-            mTrainer = new NeuralNetworkTrainer(new SumSquaredError(), NUM_DIRECTIONAL_VECTORS * 3);
-            mTrainer.LearningRate = .2;
+            NumRequiredVectors = DEFAULT_NUM_REQUIRED_VECTORS;
 
-            mScape = new GestureScape(NUM_DIRECTIONAL_VECTORS);
+            mScape = new GestureScape(NumRequiredVectors);
             mScape.DataReceived += ProcessData;
 
             mClassList = new List<DataClass>();
@@ -54,11 +52,13 @@ namespace LoboLabs.GestureNeuralNet
             NeuralNetworkGenerator generator = new NeuralNetworkGenerator();
             generator.NumHidden = 3;
             mNetwork = generator.Generate(
-                NUM_DIRECTIONAL_VECTORS * 3, // Number of vectors * 3 (x, y, z)
+                (int)NumRequiredVectors * 3, // Number of vectors * 3 (x, y, z)
                 mGestureNames);
 
             // Train networks
-            mTrainer.TrainBackPropagation(mNetwork, mClassList);
+            NeuralNetworkTrainer trainer = new NeuralNetworkTrainer(new SumSquaredError(), NumRequiredVectors * 3);
+            trainer.LearningRate = .2;
+            trainer.TrainBackPropagation(mNetwork, mClassList);
 
             mNetwork.ResultComputed += OnResultComputed;
             
@@ -85,7 +85,7 @@ namespace LoboLabs.GestureNeuralNet
             // If not found, create a new one and add it to the Definitions list
             if (returnGesture == null)
             {
-                returnGesture = new GestureClass(name, NUM_DIRECTIONAL_VECTORS);
+                returnGesture = new GestureClass(name, NumRequiredVectors);
                 mClassList.Add(returnGesture);
             }
 
@@ -133,6 +133,12 @@ namespace LoboLabs.GestureNeuralNet
             mClassList = definitionList;
 
             return nameList;
+        }
+
+        public uint NumRequiredVectors
+        {
+            get;
+            set;
         }
 
         public void OnResultComputed(object sender, ScapeData input, List<double> output)
