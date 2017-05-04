@@ -13,19 +13,23 @@ namespace LoboLabs.NeuralNet
     {
         private static ClassLogger Logger = new ClassLogger(typeof(ComputationalNode));
 
-        public ComputationalNode(BinaryReader reader) : this()
+        private NeuralNetwork mParentNetwork;
+
+        public ComputationalNode(NeuralNetwork parent, BinaryReader reader) : this(parent)
         {
             Load(reader);
         }
 
-        public ComputationalNode() :
-            this(new NoOpActivationFunction()) // Activation Function will default to No Op Function
+        public ComputationalNode(NeuralNetwork parent) :
+            this(parent, new NoOpActivationFunction()) // Activation Function will default to No Op Function
         {
         }
 
-        public ComputationalNode(ActivationFunction activationFunction) :
+        public ComputationalNode(NeuralNetwork parent, ActivationFunction activationFunction) :
             base(true) // ComputationalNodes need to sum ErrorSignals at the Node level
         {
+            mParentNetwork = parent;
+
             // Inputs
             InputWeights = new Dictionary<Node, WeightData>();
                         
@@ -168,11 +172,11 @@ namespace LoboLabs.NeuralNet
             // Read each input pair
             for (int i = 0; i < numInputPairs; ++i)
             {
-                int UUID = reader.ReadInt32();
+                uint otherUUID = reader.ReadUInt32();
                 double weight = reader.ReadDouble();
 
-                Node inputNode = GetNodeByUUID(UUID);
-                if (inputNode != null)
+                Node inputNode;
+                if (mParentNetwork.GetNodeByUUID(otherUUID, out inputNode))
                 {
                     WeightData weightData = new WeightData();
                     weightData.Weight = weight;

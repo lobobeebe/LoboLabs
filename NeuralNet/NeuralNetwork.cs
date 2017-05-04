@@ -30,7 +30,12 @@ namespace LoboLabs.NeuralNet
         }
 
         public bool Equals(NeuralNetwork other)
-        {            
+        {
+            if (Sensors.Count != other.Sensors.Count)
+            {
+                return false;
+            }
+
             // Check Sensors
             for (int i = 0; i < Sensors.Count; ++i)
             {
@@ -40,9 +45,19 @@ namespace LoboLabs.NeuralNet
                 }
             }
 
+            if (Neurons.Count != other.Neurons.Count)
+            {
+                return false;
+            }
+
             // Check Each Layer
             for (int layer = 0; layer < Neurons.Count; ++layer)
             {
+                if (Neurons[layer].Count != other.Neurons[layer].Count)
+                {
+                    return false;
+                }
+
                 for (int node = 0; node < Neurons[layer].Count; ++node)
                 {
                     if (!Neurons[layer][node].Equals(other.Neurons[layer][node]))
@@ -69,6 +84,33 @@ namespace LoboLabs.NeuralNet
             }
 
             return actuators;
+        }
+
+        public bool GetNodeByUUID(uint UUID, out Node node)
+        {
+            foreach (Node sensor in Sensors)
+            {
+                if (sensor.UUID == UUID)
+                {
+                    node = sensor;
+                    return true;
+                }
+            }
+
+            foreach (List<ComputationalNode> layer in Neurons)
+            {
+                foreach (ComputationalNode neuron in layer)
+                {
+                    if (neuron.UUID == UUID)
+                    {
+                        node = neuron;
+                        return true;
+                    }
+                }
+            }
+
+            node = null;
+            return false;
         }
 
         /// <summary>
@@ -141,7 +183,7 @@ namespace LoboLabs.NeuralNet
                 int numNodes = reader.ReadInt32();
                 for (int i = 0; i < numNodes; ++i)
                 {
-                    ComputationalNode node = new ComputationalNode(reader);
+                    ComputationalNode node = new ComputationalNode(this, reader);
                     layer.Add(node);
                 }
 

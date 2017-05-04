@@ -6,12 +6,12 @@ namespace LoboLabs.NeuralNet.Mock
 
     public class ComputationalNode : NeuralNet.ComputationalNode
     {
-        public ComputationalNode(BinaryReader reader) : base(reader)
+        public ComputationalNode(NeuralNetwork parent, BinaryReader reader) : base(parent, reader)
         {
         }
 
-        public ComputationalNode(Functions.ActivationFunction activationFunction) :
-            base(activationFunction)
+        public ComputationalNode(NeuralNetwork parent, Functions.ActivationFunction activationFunction) :
+            base(parent, activationFunction)
         {
         }
     }

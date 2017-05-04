@@ -49,21 +49,6 @@ namespace LoboLabs.NeuralNet
             return errorSignalSum;
         }
 
-        protected static Node GetNodeByUUID(int UUID)
-        {
-            Node returnNode = null;
-            
-            foreach (Node node in sNodes)
-            {
-                if (node.UUID == UUID)
-                {
-                    returnNode = node;
-                }
-            }
-
-            return returnNode;
-        }
-
         private bool IsSumming
         {
             get;

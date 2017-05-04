@@ -44,7 +44,7 @@ namespace LoboLabs.NeuralNet
             neurons.Add(new List<ComputationalNode>());
             for (int actuatorIndex = 0; actuatorIndex < numOutputs; ++actuatorIndex)
             {
-                neurons[1].Add(new ComputationalNode(new LogisticFunction()));
+                neurons[1].Add(new ComputationalNode(network, new LogisticFunction()));
                 neurons[1][actuatorIndex].Bias = GetNextWeight();
             }
 
@@ -52,7 +52,7 @@ namespace LoboLabs.NeuralNet
             for (int neuron = 0; neuron < NumHidden; ++neuron)
             {
                 // Add the new Node
-                neurons[0].Add(new ComputationalNode(new LogisticFunction()));
+                neurons[0].Add(new ComputationalNode(network, new LogisticFunction()));
 
                 // Add all sensors as inputs - TODO: This only works with two layers
                 foreach (Node sensor in sensors)

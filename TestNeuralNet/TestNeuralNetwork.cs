@@ -13,7 +13,7 @@ namespace LoboLabs.NeuralNet.TestNeuralNetwork
         [Test]
         public void SaveAndLoad()
         {
-            const int NUM_INPUTS = 5;
+            const int NUM_INPUTS = 7;
             const int NUM_OUTPUTS = 5;
 
             NeuralNetworkCreator networkCreator = new NeuralNetworkCreator();

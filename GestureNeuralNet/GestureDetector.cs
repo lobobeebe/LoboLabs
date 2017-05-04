@@ -17,10 +17,10 @@ namespace LoboLabs.GestureNeuralNet
     {
         private const string GESTURE_EXTENSION = ".gc";
 
-        private const float DEFAULT_THRESHOLD = 0.9f;
+        private const float DEFAULT_THRESHOLD = 0.95f;
 
         public delegate void GestureDetectionHandler(string gestureName);
-        public event GestureDetectionHandler OnGestureDetected;
+        public event GestureDetectionHandler GestureDetected;
 
         private GestureScape mScape;
         private NeuralNetwork mNetwork;
@@ -50,11 +50,20 @@ namespace LoboLabs.GestureNeuralNet
             bool isEqual = false;
 
             if (mNetwork.Equals(other.mNetwork) &&
-                mGestureNames.Equals(other.mGestureNames) &&
                 MinThreshold.Equals(other.MinThreshold) &&
-                mScape.Equals(other.mScape))
+                mScape.Equals(other.mScape) &&
+                mGestureNames.Count.Equals(other.mGestureNames.Count))
             {
                 isEqual = true;
+                
+                // Make sure all names match in order
+                for (int i = 0; i < mGestureNames.Count; ++i)
+                {
+                    if (mGestureNames[i] != other.mGestureNames[i])
+                    {
+                        isEqual = false;
+                    }
+                }
             }
 
 
@@ -146,17 +155,24 @@ namespace LoboLabs.GestureNeuralNet
         {
             string outputName = "";
 
-            for (int outputIndex = 0; outputIndex < output.Count; ++outputIndex)
+            int maxIndex = 0;
+
+            for (int outputIndex = 1; outputIndex < output.Count; ++outputIndex)
             {
-                if (output[outputIndex] > MinThreshold)
+                if (output[outputIndex] > output[maxIndex])
                 {
-                    outputName = mGestureNames[outputIndex];
+                    maxIndex = outputIndex;
                 }
+            }
+
+            if (output[maxIndex] > MinThreshold)
+            {
+                outputName = mGestureNames[maxIndex];
             }
 
             if (outputName.Length > 0)
             {
-                OnGestureDetected(outputName);
+                GestureDetected(outputName);
             }
         }
 

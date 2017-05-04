@@ -78,12 +78,12 @@ namespace LoboLabs.GestureNeuralNet.Test
             mDetector.OnGestureDetected += OnGestureDetected;
         }
 
-        private void TestGestures()
+        private void TestGestures(GestureDataReceiver receiver)
         {
             // Pass several Punch gestures to test the single hidden node network. It should recognize each one
             for (int i = 0; i < NUM_PUNCH_GESTURES; ++i)
             {
-                AddData(mDetector,
+                AddData(receiver,
                     GestureDataGenerator.CreateStraightData(55));
 
                 string lastGestureDetected;
@@ -94,7 +94,7 @@ namespace LoboLabs.GestureNeuralNet.Test
             // Pass several Circle gestures to test the single hidden node network. It should recognize each one
             for (int i = 0; i < NUM_CIRCLE_GESTURES; ++i)
             {
-                AddData(mDetector,
+                AddData(receiver,
                     GestureDataGenerator.CreateCircleData(1, 55));
 
                 string lastGestureDetected;
@@ -105,7 +105,7 @@ namespace LoboLabs.GestureNeuralNet.Test
             // Pass several Swipe gestures to test the single hidden node network. It should recognize each one
             for (int i = 0; i < NUM_SWIPE_GESTURES; ++i)
             {
-                AddData(mDetector,
+                AddData(receiver,
                     GestureDataGenerator.CreateSwipeData(55));
 
                 string lastGestureDetected;
@@ -116,18 +116,8 @@ namespace LoboLabs.GestureNeuralNet.Test
             // Pass several Circles of the opposite direction
             for (int i = 0; i < NUM_CIRCLE_GESTURES; ++i)
             {
-                AddData(mDetector,
+                AddData(receiver,
                     GestureDataGenerator.CreateCircleData(1, 55, false));
-
-                string lastGestureDetected;
-                Assert.False(GetLastGestureDetected(out lastGestureDetected));
-            }
-
-            // Pass several random sets of data
-            for (int i = 0; i < NUM_CIRCLE_GESTURES; ++i)
-            {
-                AddData(mDetector,
-                    GestureDataGenerator.CreateRandomData(1, 55));
 
                 string lastGestureDetected;
                 Assert.False(GetLastGestureDetected(out lastGestureDetected));
@@ -155,10 +145,7 @@ namespace LoboLabs.GestureNeuralNet.Test
         [Test]
         public void SaveAndLoad()
         {
-            // Generate the Network and create the Detector
-            NeuralNetwork network = mGenerator.Generate();
-            mDetector = new GestureDetector(network, mGenerator.GetGestureNames());
-            mDetector.OnGestureDetected += OnGestureDetected;
+            GestureDetector loadedDetector = null;
 
             using (MemoryStream stream = new MemoryStream())
             {
@@ -171,21 +158,21 @@ namespace LoboLabs.GestureNeuralNet.Test
 
                 // Read the Detector back in
                 BinaryReader reader = new BinaryReader(stream);
-                GestureDetector loadedDetector = new GestureDetector(reader);
+                loadedDetector = new GestureDetector(reader);
                 Assert.IsTrue(mDetector.Equals(loadedDetector));
 
-                mDetector.OnGestureDetected += OnGestureDetected;
+                loadedDetector.OnGestureDetected += OnGestureDetected;
             }
 
             // Test that a detector loaded from a stream can detect gestures
-            TestGestures();
+            TestGestures(loadedDetector);
         }
 
         [Test]
         public void SingleGesture()
         {
             // Test that the generated detector can detect gestures
-            TestGestures();
+            TestGestures(mDetector);
         }
         
         private bool GetLastGestureDetected(out string lastGestureName)
