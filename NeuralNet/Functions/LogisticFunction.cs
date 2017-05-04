@@ -9,6 +9,8 @@ namespace LoboLabs.NeuralNet.Functions
     /// </summary>
     public class LogisticFunction : ActivationFunction
     {
+        public static string FUNCTION_NAME = "LOGISTIC";
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -30,6 +32,11 @@ namespace LoboLabs.NeuralNet.Functions
         public override double ApplyDerivative(double input)
         {
             return Apply(input) * (1 - Apply(input));
+        }
+
+        public override string GetFunctionName()
+        {
+            return FUNCTION_NAME;
         }
     }
 

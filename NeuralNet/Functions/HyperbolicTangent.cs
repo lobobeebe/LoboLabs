@@ -9,6 +9,8 @@ namespace LoboLabs.NeuralNet.Functions
     /// </summary>
     public class HyperbolicTangent : ActivationFunction
     {
+        public static string FUNCTION_NAME = "HYPERBOLIC";
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -47,6 +49,11 @@ namespace LoboLabs.NeuralNet.Functions
         {
             //return 1 - Math.Pow(Apply(input), 2);
             return (1 + input) * (1 - input);
+        }
+
+        public override string GetFunctionName()
+        {
+            return FUNCTION_NAME;
         }
     }
 }

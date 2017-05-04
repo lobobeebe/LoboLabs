@@ -8,7 +8,7 @@ namespace LoboLabs.NeuralNet
         private static ClassLogger Logger = new ClassLogger(typeof(NeuralNetworkTrainer));
 
         private const int DEFAULT_MAX_EPOCHS = 100;
-        private const double DEFAULT_LEARNING_RATE = 1;
+        private const double DEFAULT_LEARNING_RATE = .2;
 
         private uint mNumInputs;
 

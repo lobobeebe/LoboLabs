@@ -21,7 +21,7 @@ namespace LoboLabs.NeuralNet.Test
             }
         }
 
-        public void OnDataReceived(object Sender, ScapeData scapeData)
+        public void OnDataReceived(ScapeData scapeData)
         {
             mNumDataReceived++;
         }

@@ -16,6 +16,11 @@ namespace LoboLabs.Utilities
             return min + sRandom.NextDouble() * (max - min);
         }
 
+        public static uint NextRandUInt()
+        {
+            return (uint)sRandom.Next();
+        }
+
         public static T Clamp<T>(this T val, T min, T max) where T : IComparable<T>
         {
             if (val.CompareTo(min) < 0)

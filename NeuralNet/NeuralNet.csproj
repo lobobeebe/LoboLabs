@@ -43,6 +43,7 @@
     <Compile Include="Functions\ActivationFunction.cs" />
     <Compile Include="Functions\AggregationFunction.cs" />
     <Compile Include="Functions\ErrorFunction.cs" />
+    <Compile Include="Functions\FunctionCreator.cs" />
     <Compile Include="Functions\HyperbolicTangent.cs" />
     <Compile Include="Functions\LogisticFunction.cs" />
     <Compile Include="Functions\NoOpActivationFunction.cs" />

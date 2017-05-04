@@ -9,12 +9,12 @@
         {
         }
 
-        public delegate void ScapeDataHandler(object Sender, ScapeData scapeData);
+        public delegate void ScapeDataHandler(ScapeData scapeData);
         public event ScapeDataHandler DataReceived;
 
         protected void NotifyDataReceived(ScapeData scapeData)
         {
-            DataReceived(this, scapeData);
+            DataReceived(scapeData);
         }
     }
 }

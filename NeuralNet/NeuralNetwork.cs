@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 
 using LoboLabs.Utilities;
+using System.IO;
+
 namespace LoboLabs.NeuralNet
 {
     /// <summary>
@@ -10,9 +12,9 @@ namespace LoboLabs.NeuralNet
     {
         private static ClassLogger Logger = new ClassLogger(typeof(NeuralNetwork));
 
-        public delegate void NeuralNetworkResultHandler(object sender, ScapeData input, List<double> output);
+        public delegate void NeuralNetworkResultHandler(ScapeData input, List<double> output);
         public event NeuralNetworkResultHandler ResultComputed;
-        
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -20,6 +22,37 @@ namespace LoboLabs.NeuralNet
         {
             Sensors = new List<Node>();
             Neurons = new List<List<ComputationalNode>>();
+        }
+
+        public NeuralNetwork(BinaryReader reader) : this()
+        {
+            Load(reader);
+        }
+
+        public bool Equals(NeuralNetwork other)
+        {            
+            // Check Sensors
+            for (int i = 0; i < Sensors.Count; ++i)
+            {
+                if (!Sensors[i].Equals(other.Sensors[i]))
+                {
+                    return false;
+                }
+            }
+
+            // Check Each Layer
+            for (int layer = 0; layer < Neurons.Count; ++layer)
+            {
+                for (int node = 0; node < Neurons[layer].Count; ++node)
+                {
+                    if (!Neurons[layer][node].Equals(other.Neurons[layer][node]))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
         public List<ComputationalNode> GetActuators()
@@ -85,6 +118,37 @@ namespace LoboLabs.NeuralNet
             return outputs;
         }
 
+        protected virtual void Load(BinaryReader reader)
+        {
+            // Read the number of Sensors
+            int numSensors = reader.ReadInt32();
+
+            // Read the sensors
+            for (int i = 0; i < numSensors; ++i)
+            {
+                Sensors.Add(new Node(reader));
+            }
+
+            // Read the number of layers
+            int numLayers = reader.ReadInt32();
+
+            // Read the Neuron Layers
+            for (int layerIndex = 0; layerIndex < numLayers; ++layerIndex)
+            {
+                List<ComputationalNode> layer = new List<ComputationalNode>();
+
+                // Read the number of Neurons in the layer
+                int numNodes = reader.ReadInt32();
+                for (int i = 0; i < numNodes; ++i)
+                {
+                    ComputationalNode node = new ComputationalNode(reader);
+                    layer.Add(node);
+                }
+
+                Neurons.Add(layer);
+            }
+        }
+
         /// <summary>
         /// Vector of Neurons that belong to this Neural Net
         /// </summary>
@@ -94,12 +158,38 @@ namespace LoboLabs.NeuralNet
             set;
         }
 
-        public void ProcessData(object sender, ScapeData scapeData)
+        public void ProcessData(ScapeData scapeData)
         {
             List<double> input = scapeData.AsList();
             List<double> output = Compute(input);
 
-            ResultComputed(this, scapeData, output);
+            ResultComputed(scapeData, output);
+        }
+
+        public void Save(BinaryWriter writer)
+        {
+            // Write the number of Sensors
+            writer.Write(Sensors.Count);
+
+            // Write out the Sensors
+            foreach (Node sensor in Sensors)
+            {
+                sensor.Save(writer);
+            }
+
+            // Write the number of layers
+            writer.Write(Neurons.Count);
+            
+            // Write out the Neurons
+            foreach (List<ComputationalNode> layer in Neurons)
+            {
+                // Write the number of Neurons in the layer
+                writer.Write(layer.Count);
+                foreach (ComputationalNode node in layer)
+                {
+                    node.Save(writer);
+                }
+            }
         }
         
         /// <summary>

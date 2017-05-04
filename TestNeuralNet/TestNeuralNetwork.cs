@@ -3,6 +3,40 @@ using System.Collections.Generic;
 namespace LoboLabs.NeuralNet.TestNeuralNetwork
 {
     using NUnit.Framework;
+    using System.IO;
+
+    [TestFixture]
+    public class TestNeuralNetwork
+    {
+        private NeuralNetwork mNeuralNet;
+
+        [Test]
+        public void SaveAndLoad()
+        {
+            const int NUM_INPUTS = 5;
+            const int NUM_OUTPUTS = 5;
+
+            NeuralNetworkCreator networkCreator = new NeuralNetworkCreator();
+
+            mNeuralNet = networkCreator.Create(NUM_INPUTS, NUM_OUTPUTS);
+            
+            // Using MemoryStream 
+            using (MemoryStream stream = new MemoryStream())
+            {
+                // Write the node to the Memory Stream
+                BinaryWriter writer = new BinaryWriter(stream);
+                mNeuralNet.Save(writer);
+                
+                // Read the node from the Memory Stream
+                stream.Position = 0;
+                BinaryReader reader = new BinaryReader(stream);
+                NeuralNetwork loadedNet = new NeuralNetwork(reader);
+
+                Assert.True(mNeuralNet.Equals(loadedNet));
+            }
+        }
+    }
+    
     /*
     [TestFixture]
     public class TestNeuralNetwork

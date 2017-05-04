@@ -3,6 +3,7 @@ using NUnit.Framework;
 
 namespace LoboLabs.GestureNeuralNet.Test
 {
+    using LoboLabs.Utilities;
     using Utilities;
 
     [TestFixture]

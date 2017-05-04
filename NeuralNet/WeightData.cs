@@ -2,6 +2,11 @@
 {
     public class WeightData
     {        
+        public bool Equals(WeightData other)
+        {
+            return Weight == other.Weight;
+        }
+
         public double Weight
         {
             get;

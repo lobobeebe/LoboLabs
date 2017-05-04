@@ -41,7 +41,10 @@
   <ItemGroup>
     <Compile Include="GestureData.cs" />
     <Compile Include="GestureClass.cs" />
+    <Compile Include="GestureDataReceiver.cs" />
+    <Compile Include="GestureDetector.cs" />
     <Compile Include="GestureManager.cs" />
+    <Compile Include="GestureNeuralNetworkGenerator.cs" />
     <Compile Include="GestureScape.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

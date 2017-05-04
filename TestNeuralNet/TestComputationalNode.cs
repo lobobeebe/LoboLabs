@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using System.IO;
+using LoboLabs.Utilities;
 
 namespace LoboLabs.NeuralNet.Test
 {
@@ -62,5 +64,51 @@ namespace LoboLabs.NeuralNet.Test
                 mNode.UpdateWeightDeltas(.1);
             }
         }        
+
+        [Test]
+        public void SaveAndLoad()
+        {
+            int numInputs = 5;
+            List<uint> uuidList = new List<uint>();
+            Dictionary<Node, double> uuidWeightMap = new Dictionary<Node, double>();
+
+            // Create Inputs
+            for (int i = 0; i < numInputs; ++i)
+            {
+                Node node = new Node(true);
+                uuidWeightMap.Add(node, i);
+                uuidList.Add(node.UUID);
+                
+                mNode.RegisterInput(node, i);
+            }
+
+            // Set Bias
+            mNode.Bias = 10;
+            
+            // Using MemoryStream 
+            using (MemoryStream stream = new MemoryStream())
+            {
+                // Write the node to the Memory Stream
+                BinaryWriter writer = new BinaryWriter(stream);
+                mNode.Save(writer);
+
+                // Read the node from the Memory Stream
+                stream.Position = 0;
+                BinaryReader reader = new BinaryReader(stream);
+                ComputationalNode loadedNode = new Mock.ComputationalNode(reader);
+
+                Assert.IsTrue(mNode.Equals(loadedNode));
+            }
+
+            // Verify the Node loaded back in correctly.
+            Assert.AreEqual(5, mNode.InputWeights.Count);
+            foreach (KeyValuePair<Node, WeightData> pair in mNode.InputWeights)
+            {
+                Assert.True(uuidList.Contains(pair.Key.UUID));
+                Assert.AreEqual(pair.Value.Weight, uuidWeightMap[pair.Key], .00001);
+            }
+
+            Assert.AreEqual(10, mNode.Bias);
+        }
     }
 }

@@ -1,23 +1,23 @@
-﻿namespace LoboLabs
-{
-namespace NeuralNet
-{
-namespace Functions
+﻿namespace LoboLabs.NeuralNet.Functions
 {
 
-public class NoOpActivationFunction : ActivationFunction
-{
-    public override double Apply(double input)
+    public class NoOpActivationFunction : ActivationFunction
     {
-        return input;
-    }
+        public static string FUNCTION_NAME = "NO_OP";
 
-    public override double ApplyDerivative(double input)
-    {
-        return 1;
-    }
-}
+        public override double Apply(double input)
+        {
+            return input;
+        }
 
-}
-}
+        public override double ApplyDerivative(double input)
+        {
+            return 1;
+        }
+
+        public override string GetFunctionName()
+        {
+            return FUNCTION_NAME;
+        }
+    }
 }
